@@ -107,5 +107,31 @@ namespace GeeklistSharp.Service
             _token = token;
             _tokenSecret = tokenSecret;
         }
+
+
+
+        public object GetCurrentUser()
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = "/user"
+            };
+
+            var response = _oauth.Request(request);
+
+            //TODO: Parse this json string and convert it into the object we are looking for.
+
+            return response.Content;
+        }
     }
 }
