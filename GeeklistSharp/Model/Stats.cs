@@ -6,21 +6,28 @@ using System.Text;
 
 namespace GeeklistSharp.Model
 {
-    /*
-        stats: {
-            number_of_views: 55,
-            views: 64,
-            highfives: 3
-        }
-    */
+
     [DataContract]
     public class Stats
     {
-        //[DataMember(Name = "number_of_views")]
-        //public string NumberOfViews { get; set; }
+        [DataMember(Name = "number_of_contributions")]
+        public long Contributions { get; set; }
+
+        //TODO: Bring up the fact that User->Status has number_of_highfives while Card->Status has just highfives.
+        [DataMember(Name = "number_of_highfives")]
+        public long NumberOfHighFives { get; set; }
 
         [DataMember(Name = "highfives")]
-        public int HighFives { get; set; }
+        public long HighFives { get; set; }
+
+        [DataMember(Name = "number_of_mentions")]
+        public long Mentions { get; set; }
+
+        [DataMember(Name = "number_of_cards")]
+        public long Cards { get; set; }
+
+        [DataMember(Name = "number_of_pings")]
+        public long Pings { get; set; }
 
         [DataMember(Name = "views")]
         public int Views { get; set; }
