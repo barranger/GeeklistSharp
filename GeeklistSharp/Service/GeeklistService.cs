@@ -7,6 +7,8 @@ using Hammock.Authentication.OAuth;
 using Hammock.Web;
 using System.Compat.Web;
 using GeeklistSharp.Model;
+using System.Runtime.Serialization.Json;
+using System.IO;
 
 namespace GeeklistSharp.Service
 {
@@ -129,9 +131,24 @@ namespace GeeklistSharp.Service
 
             var response = _oauth.Request(request);
 
-            //TODO: Parse this json string and convert it into the object we are looking for.
+			var result = GetResponse<User>(response.ContentStream);
 
-            return response.Content;
+			if (result.Status != "ok")
+			{
+				throw new GeekListException(result.Status);
+			}
+
+            return result.Data;
         }
+
+		protected virtual Response<T> GetResponse<T>(Stream jsonStream)
+			where T : new()
+		{
+			var serializer = new DataContractJsonSerializer(typeof(Response<T>));
+
+			var result = (Response<T>)serializer.ReadObject(jsonStream);
+
+			return result;
+		}
     }
 }
