@@ -49,16 +49,16 @@ namespace GeeklistSharp.Model
         public bool IsBeta { get; set; }
 
         [DataMember(Name = "created_at")]
-        public DateTime CreatedAt { get; set; }
+        public string CreatedAt { get; set; }
 
         [DataMember(Name = "updated_at")]
-        public DateTime UpdatedAt { get; set; }
+        public string UpdatedAt { get; set; }
 
         [DataMember(Name = "active_at")]
-        public DateTime ActiveAt { get; set; }
+        public string ActiveAt { get; set; }
         
         [DataMember(Name = "trending_at")]
-        public DateTime TrendingAt { get; set; }
+        public string TrendingAt { get; set; }
 
         [DataMember(Name = "trending_hist")]
         public List<string> TrendingHistory { get; set; }
@@ -107,22 +107,5 @@ namespace GeeklistSharp.Model
         public List<string> AvailabeFor { get; set; }
     }
 
-    [DataContract]
-    public class Stats
-    {
-        [DataMember(Name = "number_of_contributions")]
-        public long Contributions { get; set; }
-
-        [DataMember(Name = "number_of_highfives")]
-        public long HighFives { get; set; }
-
-        [DataMember(Name = "number_of_mentions")]
-        public long Mentions { get; set; }
-
-        [DataMember(Name = "number_of_cards")]
-        public long Cards { get; set; }
-
-        [DataMember(Name = "number_of_pings")]
-        public long Pings { get; set; }
-    }
+    
 }
