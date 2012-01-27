@@ -140,7 +140,9 @@ namespace GeeklistSharp.Service
             return result.Data;
         }
 
-		protected virtual Response<T> GetResponse<T>(Stream jsonStream)
+        
+
+		public virtual Response<T> GetResponse<T>(Stream jsonStream)
 			where T : new()
 		{
 			var serializer = new DataContractJsonSerializer(typeof(Response<T>));
