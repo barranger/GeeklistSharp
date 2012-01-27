@@ -110,10 +110,9 @@ namespace GeeklistSharp.Service
             _tokenSecret = tokenSecret;
         }
 
-
-
-        public object GetCurrentUser()
+        public User GetUser(string name = null)
         {
+            var path = name == null ? "/user" : "/users/" + name;
             var request = new RestRequest
             {
                 Credentials = new OAuthCredentials
@@ -126,17 +125,17 @@ namespace GeeklistSharp.Service
                     Type = OAuthType.ProtectedResource
                 },
                 Method = WebMethod.Get,
-                Path = "/user"
+                Path = path
             };
 
             var response = _oauth.Request(request);
 
-			var result = GetResponse<User>(response.ContentStream);
+            var result = GetResponse<User>(response.ContentStream);
 
-			if (result.Status != "ok")
-			{
-				throw new GeekListException(result.Status);
-			}
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status);
+            }
 
             return result.Data;
         }
@@ -150,5 +149,7 @@ namespace GeeklistSharp.Service
 
 			return result;
 		}
+
+        
     }
 }

@@ -17,9 +17,22 @@ namespace GeeklistSharp.Tests
         {
             var service = GetAndTestAuthenticatedService();
 
-            var currentUser = service.GetCurrentUser();
+            var currentUser = service.GetUser();
 
             Assert.IsNotNull(currentUser);
+            Assert.IsNotNull(currentUser.Name);
+        }
+
+        [TestMethod]
+        public void UserByNameInfoTest()
+        {
+            var service = GetAndTestAuthenticatedService();
+
+            var user = service.GetUser("4mkmobile");
+
+            Assert.IsNotNull(user);
+            Assert.AreEqual(user.ScreenName, "4MKMobile");
+            Assert.AreEqual(user.Name, "Barranger Ridler");
         }
 
         private GeeklistService GetAndTestAuthenticatedService()
@@ -35,7 +48,7 @@ namespace GeeklistSharp.Tests
             var uri = service.GetAuthorizationUrl(requestToken.Token);
             Process.Start(uri.ToString());
 
-            var verifyer = "1234567"; // <-- Debugger breakpoint and edit with the actual verifier
+            var verifyer = "9623666"; // <-- Debugger breakpoint and edit with the actual verifier
 
             OAuthAccessToken accessToken = service.GetAccessToken(requestToken, verifyer);
             Assert.IsNotNull(accessToken);
