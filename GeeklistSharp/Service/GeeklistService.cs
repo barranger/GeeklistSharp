@@ -140,7 +140,126 @@ namespace GeeklistSharp.Service
             return result.Data;
         }
 
-		protected virtual Response<T> GetResponse<T>(Stream jsonStream)
+#region Cards
+        public object GetCurrentUsersCards()
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = "/user/cards"
+            };
+
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<CardData>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status);
+            }
+
+            return result.Data;
+        }
+
+        public object GetUsersCards(string userName)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = string.Format("/users/{0}/cards", userName)
+            };
+
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<CardData>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status);
+            }
+
+            return result.Data;
+        }
+
+        public object GetCard(string id)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = string.Format("/cards/{0}", id)
+            };
+
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<Card>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status);
+            }
+
+            return result.Data;
+        }
+
+        public object CreateCard(string headline)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Post,
+                Path = "/cards"
+            };
+
+            request.AddParameter("headline", headline);
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<Card>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status);
+            }
+
+            return result.Data;
+        }
+#endregion Cards
+        
+        protected virtual Response<T> GetResponse<T>(Stream jsonStream)
 			where T : new()
 		{
 			var serializer = new DataContractJsonSerializer(typeof(Response<T>));
