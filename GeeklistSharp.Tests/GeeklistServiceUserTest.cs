@@ -15,7 +15,7 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void CurrentUserInfoTest()
         {
-            var service = GetAndTestAuthenticatedService();
+            var service = GetAuthenticatedService();
 
             var currentUser = service.GetUser();
 
@@ -26,7 +26,7 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void UserByNameInfoTest()
         {
-            var service = GetAndTestAuthenticatedService();
+            var service = GetAuthenticatedService();
 
             var user = service.GetUser("4mkmobile");
 
@@ -53,6 +53,20 @@ namespace GeeklistSharp.Tests
             OAuthAccessToken accessToken = service.GetAccessToken(requestToken, verifyer);
             Assert.IsNotNull(accessToken);
             Assert.IsFalse(accessToken.Token == "?" || accessToken.TokenSecret == "?");
+
+            service.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
+            return service;
+        }
+
+        private GeeklistService GetAuthenticatedService()
+        {
+            string consumerKey = TestConstants.OAUTH_CONSUMER_KEY; // TODO: Initialize to an appropriate value
+            string consumerSecret = TestConstants.OAUTH_CONSUMER_SECRET; // TODO: Initialize to an appropriate value
+            string token = TestConstants.TOKEN; // TODO: Initialize to an appropriate value
+            string tokenSecret = TestConstants.TOKEN_SECRET; // TODO: Initialize to an appropriate value
+            GeeklistService service = new GeeklistService(consumerKey, consumerSecret);
+
+            OAuthAccessToken accessToken = new OAuthAccessToken { Token = token, TokenSecret = tokenSecret };
 
             service.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
             return service;

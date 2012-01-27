@@ -10,5 +10,7 @@ namespace GeeklistSharp.Tests
 #error Add Your Geekli.st Keys here
         public const string OAUTH_CONSUMER_KEY = "";
         public const string OAUTH_CONSUMER_SECRET = "";
+        public const string TOKEN = "";
+        public const string TOKEN_SECRET = "";
     }
 }
