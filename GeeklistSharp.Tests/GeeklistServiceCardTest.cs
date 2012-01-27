@@ -33,6 +33,45 @@ namespace GeeklistSharp.Tests
         }
 
         /// <summary>
+        ///A test for ServiceCards to get the Cards of the current User
+        ///</summary>
+        [TestMethod]
+        public void ServiceGetCurrentUsersCardsPagedTest()
+        {
+            var service = GetAuthenticatedService();
+
+            var currentUsersCards = service.GetCurrentUsersCards(1,null);
+
+            Assert.IsNotNull(currentUsersCards);
+        }
+
+        /// <summary>
+        ///A test for ServiceCards to get the Cards of the current User
+        ///</summary>
+        [TestMethod]
+        public void ServiceGetCurrentUsersCardsCountTest()
+        {
+            var service = GetAuthenticatedService();
+
+            var currentUsersCards = service.GetCurrentUsersCards(null, 5);
+
+            Assert.IsNotNull(currentUsersCards);
+        }
+
+        /// <summary>
+        ///A test for ServiceCards to get the Cards of the current User
+        ///</summary>
+        [TestMethod]
+        public void ServiceGetCurrentUsersCardsPagedCountTest()
+        {
+            var service = GetAuthenticatedService();
+
+            var currentUsersCards = service.GetCurrentUsersCards(2, 5);
+
+            Assert.IsNotNull(currentUsersCards);
+        }
+
+        /// <summary>
         ///A test for ServiceCards for a specific User
         ///</summary>
         [TestMethod]

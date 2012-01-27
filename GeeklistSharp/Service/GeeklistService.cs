@@ -143,6 +143,11 @@ namespace GeeklistSharp.Service
 #region Cards
         public object GetCurrentUsersCards()
         {
+            return GetCurrentUsersCards(null,null);
+        }
+
+        public object GetCurrentUsersCards(int? page,int? count)
+        {
             var request = new RestRequest
             {
                 Credentials = new OAuthCredentials
@@ -158,6 +163,15 @@ namespace GeeklistSharp.Service
                 Path = "/user/cards"
             };
 
+            if (page.HasValue)
+            {
+                request.AddParameter("page",page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
+
             var response = _oauth.Request(request);
 
             var result = GetResponse<CardData>(response.ContentStream);
@@ -171,6 +185,11 @@ namespace GeeklistSharp.Service
         }
 
         public object GetUsersCards(string userName)
+        {
+            return GetUsersCards(userName, null, null);
+        }
+
+        public object GetUsersCards(string userName, int? page, int? count)
         {
             var request = new RestRequest
             {
@@ -186,6 +205,15 @@ namespace GeeklistSharp.Service
                 Method = WebMethod.Get,
                 Path = string.Format("/users/{0}/cards", userName)
             };
+
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
 
             var response = _oauth.Request(request);
 
