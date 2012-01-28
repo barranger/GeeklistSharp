@@ -65,16 +65,6 @@ namespace GeeklistSharp.Model
 	}
 
     [DataContract]
-    public class Avatar
-    {
-        [DataMember(Name = "small")]
-        public Uri Small { get; set; }
-
-        [DataMember(Name = "large")]
-        public Uri Large { get; set; }
-    }
-
-    [DataContract]
     public class Company
     {
         [DataMember(Name = "title")]
@@ -112,9 +102,6 @@ namespace GeeklistSharp.Model
     {
         [DataMember(Name = "number_of_contributions")]
         public long Views { get; set; }
-
-        [DataMember(Name = "number_of_contributions")]
-        public long Contributions { get; set; }
 
         [DataMember(Name = "number_of_highfives")]
         public long HighFives { get; set; }

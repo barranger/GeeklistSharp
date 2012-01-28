@@ -40,6 +40,6 @@ namespace GeeklistSharp.Model
         public int TotalCards { get; set; }
 
         [DataMember(Name = "cards")]
-        public Card[] Cards { get; set; }
+        public List<Card> Cards { get; set; }
     }
 }

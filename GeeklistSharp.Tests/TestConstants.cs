@@ -13,5 +13,10 @@ namespace GeeklistSharp.Tests
 
         public const string TOKEN = "NbZlmmhhhXbyheXswE_ZcrC34hc";
         public const string TOKEN_SECRET = "NUV8tioQRrHLdLXVyu3dUJVtcpXcsnlpvxfBIuXAR0g";
+        //public const string OAUTH_CONSUMER_KEY = "";
+        //public const string OAUTH_CONSUMER_SECRET = "";
+        //public const string TOKEN = "";
+        //public const string TOKEN_SECRET = "";
+
     }
 }

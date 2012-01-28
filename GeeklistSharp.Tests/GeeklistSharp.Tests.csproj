@@ -52,7 +52,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GeeklistServiceFollowersTest.cs" />
+    <Compile Include="GeeklistBaseTest.cs" />
+    <Compile Include="GeeklistServiceActivityTest.cs" />
     <Compile Include="GeeklistServiceCardTest.cs" />
+    <Compile Include="GeeklistServiceHighfiveTest.cs" />
     <Compile Include="GeeklistServiceTest.cs" />
     <Compile Include="GeeklistServiceUserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

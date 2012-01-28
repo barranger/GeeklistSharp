@@ -56,7 +56,7 @@ namespace GeeklistSharp.Model
 		public string Slug { get; set; }
 
 		[DataMember(Name = "tasks")]
-		public string[] Tasks { get; set; }
+        public List<string> Tasks { get; set; }
 
 		[DataMember(Name = "updated_at")]
 		public string UpdatedAt { get; set; }
@@ -68,7 +68,7 @@ namespace GeeklistSharp.Model
 		public ShortCode ShortCode { get; set; }
 
 		[DataMember(Name = "trending_hist")]
-		public string[] TrendingHist { get; set; }
+        public List<string> TrendingHist { get; set; }
 
 		[DataMember(Name = "trending_at")]
 		public string TrendingAt { get; set; }
@@ -77,7 +77,7 @@ namespace GeeklistSharp.Model
 		public bool IsTrending { get; set; }
 
 		[DataMember(Name = "skills")]
-		public string[] Skills { get; set; }
+		public List<string> Skills { get; set; }
 
 		[DataMember(Name = "id")]
 		public string Id { get; set; }
