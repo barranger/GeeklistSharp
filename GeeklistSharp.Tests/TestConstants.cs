@@ -7,7 +7,7 @@ namespace GeeklistSharp.Tests
 {
     public class TestConstants
     {
-#error Add Your Geekli.st Keys here
+//#error Add Your Geekli.st Keys here
         public const string OAUTH_CONSUMER_KEY = "";
         public const string OAUTH_CONSUMER_SECRET = "";
         public const string TOKEN = "";

@@ -16,7 +16,7 @@ namespace GeeklistSharp.Tests
     ///to contain all GeeklistServiceTest Unit Tests
     ///</summary>
     [TestClass()]
-    public class GeeklistServiceCardTest
+    public class GeeklistServiceCardTest : GeeklistBaseTest
     {
 
         /// <summary>
@@ -33,16 +33,42 @@ namespace GeeklistSharp.Tests
         }
 
         /// <summary>
-        ///A test for ServiceCards for a specific User
+        ///A test for ServiceCards to get the Cards of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetUsersCardsTest()
+        public void ServiceGetCurrentUsersCardsPagedTest()
         {
             var service = GetAuthenticatedService();
 
-            var usersCards = service.GetUsersCards("oakcool");
+            var currentUsersCards = service.GetCurrentUsersCards(1,null);
 
-            Assert.IsNotNull(usersCards);
+            Assert.IsNotNull(currentUsersCards);
+        }
+
+        /// <summary>
+        ///A test for ServiceCards to get the Cards of the current User
+        ///</summary>
+        [TestMethod]
+        public void ServiceGetCurrentUsersCardsCountTest()
+        {
+            var service = GetAuthenticatedService();
+
+            var currentUsersCards = service.GetCurrentUsersCards(null, 5);
+
+            Assert.IsNotNull(currentUsersCards);
+        }
+
+        /// <summary>
+        ///A test for ServiceCards to get the Cards of the current User
+        ///</summary>
+        [TestMethod]
+        public void ServiceGetCurrentUsersCardsPagedCountTest()
+        {
+            var service = GetAuthenticatedService();
+
+            var currentUsersCards = service.GetCurrentUsersCards(2, 5);
+
+            Assert.IsNotNull(currentUsersCards);
         }
 
         /// <summary>
@@ -110,13 +136,13 @@ namespace GeeklistSharp.Tests
             Assert.AreEqual(result.Cards[0].Slug, "test-2-for-c-api-wrapper");
             Assert.AreEqual(result.Cards[0].AuthorId, "e47163371a660b6eca2b7935ec31f058648175377b290fb039229b3a08971890");
             Assert.AreEqual(result.Cards[0].Headline, "Test 2 for C# API Wrapper");
-            Assert.AreEqual(result.Cards[0].TrendingHist.Length, 0);
+            Assert.AreEqual(result.Cards[0].TrendingHist.Count, 0);
             Assert.AreEqual(result.Cards[0].TrendingAt, "2012-01-27T03:01:11.747Z");
             Assert.AreEqual(result.Cards[0].CreatedAt, "2012-01-27T03:01:11.747Z");
             Assert.AreEqual(result.Cards[0].IsTrending, false);
             Assert.AreEqual(result.Cards[0].IsActive, true);
-            Assert.AreEqual(result.Cards[0].Skills.Length, 0);
-            Assert.AreEqual(result.Cards[0].Tasks.Length, 0);
+            Assert.AreEqual(result.Cards[0].Skills.Count, 0);
+            Assert.AreEqual(result.Cards[0].Tasks.Count, 0);
             Assert.AreEqual(result.Cards[0].Stats.HighFives, 0);
             Assert.AreEqual(result.Cards[0].Stats.Views, 0);
             Assert.AreEqual(result.Cards[0].Id, "146a1bcbe95def14a19a5441cbccb17f5b7b06b25b99396ac906872e584b268a");
@@ -143,13 +169,13 @@ namespace GeeklistSharp.Tests
             Assert.AreEqual(result.Slug, "test-2-for-c-api-wrapper");
             Assert.AreEqual(result.AuthorId, "e47163371a660b6eca2b7935ec31f058648175377b290fb039229b3a08971890");
             Assert.AreEqual(result.Headline, "Test 2 for C# API Wrapper");
-            Assert.AreEqual(result.TrendingHist.Length, 0);
+            Assert.AreEqual(result.TrendingHist.Count, 0);
             Assert.AreEqual(result.TrendingAt, "2012-01-27T03:01:11.747Z");
             Assert.AreEqual(result.CreatedAt, "2012-01-27T03:01:11.747Z");
             Assert.AreEqual(result.IsTrending, false);
             Assert.AreEqual(result.IsActive, true);
-            Assert.AreEqual(result.Skills.Length, 0);
-            Assert.AreEqual(result.Tasks.Length, 0);
+            Assert.AreEqual(result.Skills.Count, 0);
+            Assert.AreEqual(result.Tasks.Count, 0);
             Assert.AreEqual(result.Stats.HighFives, 0);
             Assert.AreEqual(result.Stats.Views, 0);
             Assert.AreEqual(result.Id, "146a1bcbe95def14a19a5441cbccb17f5b7b06b25b99396ac906872e584b268a");
@@ -193,19 +219,5 @@ namespace GeeklistSharp.Tests
             Assert.AreEqual(result.GklstUrl, "http://gkl.st/Xcxn4");
         }
 #endregion Card Serialization Tests
-
-        private GeeklistService GetAuthenticatedService()
-        {
-            string consumerKey = TestConstants.OAUTH_CONSUMER_KEY; // TODO: Initialize to an appropriate value
-            string consumerSecret = TestConstants.OAUTH_CONSUMER_SECRET; // TODO: Initialize to an appropriate value
-            string token = TestConstants.TOKEN; // TODO: Initialize to an appropriate value
-            string tokenSecret = TestConstants.TOKEN_SECRET; // TODO: Initialize to an appropriate value
-            GeeklistService service = new GeeklistService(consumerKey, consumerSecret);
-
-            OAuthAccessToken accessToken = new OAuthAccessToken { Token = token, TokenSecret = tokenSecret };
-
-            service.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
-            return service;
-        }
     }
 }
