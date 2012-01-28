@@ -29,6 +29,9 @@ namespace GeeklistSharp.Model
         [DataMember(Name = "number_of_pings")]
         public long Pings { get; set; }
 
+        [DataMember(Name = "number_of_views")]
+        public int NumberOfViews { get; set; }
+
         [DataMember(Name = "views")]
         public int Views { get; set; }
     }

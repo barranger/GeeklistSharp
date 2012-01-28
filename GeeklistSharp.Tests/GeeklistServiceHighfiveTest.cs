@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using GeeklistSharp.Model;
 
 namespace GeeklistSharp.Tests
 {
@@ -24,9 +25,15 @@ namespace GeeklistSharp.Tests
         {
             var service = GetAuthenticatedService();
 
-            var returnStatus = service.HighfiveItem(testCardId, Service.GeeklistItemType.Card);
-
-            Assert.IsNotNull(returnStatus);
+            try
+            {
+                var returnStatus = service.HighfiveItem(testCardId, Service.GeeklistItemType.Card);
+                Assert.IsNotNull(returnStatus);
+            }
+            catch (GeekListException gle)
+            {
+                Assert.AreEqual("Duplicate!", gle.Error.Message);
+            }
         }
 
         /// <summary>
@@ -37,9 +44,15 @@ namespace GeeklistSharp.Tests
         {
             var service = GetAuthenticatedService();
 
-            var returnStatus = service.HighfiveItem(testMicroId, Service.GeeklistItemType.Micro);
-
-            Assert.IsNotNull(returnStatus);
+            try
+            {
+                var returnStatus = service.HighfiveItem(testMicroId, Service.GeeklistItemType.Micro);
+                Assert.IsNotNull(returnStatus);
+            }
+            catch (GeekListException gle)
+            {
+                Assert.AreEqual("Duplicate!", gle.Error.Message);
+            }
         }
 
     }

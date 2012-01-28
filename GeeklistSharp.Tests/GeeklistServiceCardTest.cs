@@ -91,11 +91,11 @@ namespace GeeklistSharp.Tests
         public void ServiceCreateCardTest()
         {
             var service = GetAuthenticatedService();
-
-            var card = service.CreateCard("Unit Test Card") as Card;
+            var msg = "Unit Test Card" + Guid.NewGuid().ToString();
+            var card = service.CreateCard(msg) as Card;
 
             Assert.IsNotNull(card);
-            Assert.AreEqual(card.Headline, "Unit Test Card");
+            Assert.AreEqual(card.Headline, msg);
         }
 
 #region Card Serialization Tests
@@ -197,8 +197,8 @@ namespace GeeklistSharp.Tests
             Stats result = serializer.ReadObject(memoryStream) as Stats;
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.HighFives, 2);
-            Assert.AreEqual(result.Views, 5);
+            Assert.AreEqual(2, result.NumberOfHighFives);
+            Assert.AreEqual(5, result.Views);
         }
 
         /// <summary>

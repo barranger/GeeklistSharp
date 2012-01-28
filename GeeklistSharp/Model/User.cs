@@ -96,23 +96,4 @@ namespace GeeklistSharp.Model
         [DataMember(Name = "available_for")]
         public List<string> AvailabeFor { get; set; }
     }
-
-    [DataContract]
-    public class Stats
-    {
-        [DataMember(Name = "number_of_contributions")]
-        public long Views { get; set; }
-
-        [DataMember(Name = "number_of_highfives")]
-        public long HighFives { get; set; }
-
-        [DataMember(Name = "number_of_mentions")]
-        public long Mentions { get; set; }
-
-        [DataMember(Name = "number_of_cards")]
-        public long Cards { get; set; }
-
-        [DataMember(Name = "number_of_pings")]
-        public long Pings { get; set; }
-    }
 }

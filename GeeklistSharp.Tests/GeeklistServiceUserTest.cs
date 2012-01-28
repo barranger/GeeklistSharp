@@ -23,6 +23,7 @@ namespace GeeklistSharp.Tests
 
             Assert.IsNotNull(currentUser);
             Assert.IsNotNull(currentUser.Name);
+            //Assert.AreNotEqual(currentUser.Stats.Views, 0);
         }
 
         [TestMethod]
@@ -35,6 +36,8 @@ namespace GeeklistSharp.Tests
             Assert.IsNotNull(user);
             Assert.AreEqual(user.ScreenName, "4MKMobile");
             Assert.AreEqual(user.Name, "Barranger Ridler");
+            //Assert.IsNotNull(user.Stats);
+            //Assert.AreNotEqual(user.Stats.Views, 0);
         }
 
         private GeeklistService GetAndTestAuthenticatedService()

@@ -132,7 +132,7 @@ namespace GeeklistSharp.Service
 
             if (result.Status != "ok")
             {
-                throw new GeekListException(result.Status);
+                throw new GeekListException(result.Status, result.Error);
             }
 
             return result.Data;
@@ -177,7 +177,7 @@ namespace GeeklistSharp.Service
 
             if (result.Status != "ok")
             {
-                throw new GeekListException(result.Status);
+                throw new GeekListException(result.Status, result.Error);
             }
 
             return result.Data;
@@ -220,7 +220,7 @@ namespace GeeklistSharp.Service
 
             if (result.Status != "ok")
             {
-                throw new GeekListException(result.Status);
+                throw new GeekListException(result.Status, result.Error);
             }
 
             return result.Data;
@@ -249,7 +249,7 @@ namespace GeeklistSharp.Service
 
             if (result.Status != "ok")
             {
-                throw new GeekListException(result.Status);
+                throw new GeekListException(result.Status, result.Error);
             }
 
             return result.Data;
@@ -279,7 +279,7 @@ namespace GeeklistSharp.Service
 
             if (result.Status != "ok")
             {
-                throw new GeekListException(result.Status);
+                throw new GeekListException(result.Status, result.Error);
             }
 
             return result.Data;
@@ -396,7 +396,7 @@ namespace GeeklistSharp.Service
         {
             if (result.Status != "ok")
             {
-                throw new GeekListException(result.Status);
+                throw new GeekListException(result.Status, result.Error);
             }
         }
 
@@ -478,7 +478,7 @@ namespace GeeklistSharp.Service
 
             if (result.Status != "ok")
             {
-                throw new GeekListException(result.Status);
+                throw new GeekListException(result.Status, result.Error);
             }
             return result.Data;
         }
@@ -520,7 +520,7 @@ namespace GeeklistSharp.Service
 
             if (result.Status != "ok")
             {
-                throw new GeekListException(result.Status);
+                throw new GeekListException(result.Status, result.Error);
             }
 
             return result.Data;
@@ -549,7 +549,7 @@ namespace GeeklistSharp.Service
 
             if (result.Status != "ok")
             {
-                throw new GeekListException(result.Status);
+                throw new GeekListException(result.Status, result.Error);
             }
 
             return result.Data;
@@ -584,9 +584,9 @@ namespace GeeklistSharp.Service
 
             if (result.Status != "ok")
             {
-                throw new GeekListException(result.Status);
-            }
+                throw new GeekListException(result.Status, result.Error);
 
+            }
             return result.Data;
         }
 #endregion
