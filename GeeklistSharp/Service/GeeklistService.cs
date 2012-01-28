@@ -23,7 +23,6 @@ namespace GeeklistSharp.Service
 
         private readonly RestClient _oauth;
 
-
         public GeeklistService(string consumerKey, string consumerSecret, string callback = "oob")
         {
             _consumerKey = consumerKey;
@@ -66,8 +65,6 @@ namespace GeeklistSharp.Service
 
             return oauth;
         }
-
-
 
         public Uri GetAuthorizationUrl(string token)
         {
@@ -140,7 +137,7 @@ namespace GeeklistSharp.Service
             return result.Data;
         }
 
-#region Cards
+        #region Cards
         public object GetCurrentUsersCards()
         {
             return GetCurrentUsersCards(null,null);
@@ -285,8 +282,184 @@ namespace GeeklistSharp.Service
 
             return result.Data;
         }
-#endregion Cards
-        
+        #endregion Cards
+
+        #region Activity
+        public object GetCurrentUsersActivities()
+        {
+            return GetCurrentUsersActivities(null, null);
+        }
+
+        public object GetCurrentUsersActivities(int? page, int? count)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = "/user/activity"
+            };
+
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
+
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<CardData>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status);
+            }
+
+            return result.Data;
+        }
+
+        public object GetUsersActivities(string userName)
+        {
+            return GetUsersActivities(userName, null, null);
+        }
+
+        public object GetUsersActivities(string userName, int? page, int? count)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = string.Format("/users/{0}/activity", userName)
+            };
+
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
+
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<List<Activity>>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status);
+            }
+
+            return result.Data;
+        }
+
+        public object GetAllActivities()
+        {
+            return GetAllActivities(null, null);
+        }
+
+        public object GetAllActivities(int? page, int? count)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = "/activity"
+            };
+
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
+
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<List<Activity>>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status);
+            }
+
+            return result.Data;
+        }
+        #endregion
+
+        #region HighFive
+        public object HighfiveItem(string id, GeeklistItemType type)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentException("Invalid id","id");
+            }
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Post,
+                Path = "/highfive"
+            };
+            string typeParameter;
+            switch(type){
+                case GeeklistItemType.Micro:
+                    typeParameter="micro";
+                    break;
+                case GeeklistItemType.Card:
+                default:
+                    typeParameter="card";
+                    break;
+            }
+            request.AddParameter("type", typeParameter);
+            request.AddParameter("gfk", id);
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<Card>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status);
+            }
+
+            return result.Data;
+        }
+#endregion
         protected virtual Response<T> GetResponse<T>(Stream jsonStream)
 			where T : new()
 		{
@@ -296,7 +469,5 @@ namespace GeeklistSharp.Service
 
 			return result;
 		}
-
-        
     }
 }

@@ -45,9 +45,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Globals.cs" />
+    <Compile Include="Model\Activity.cs" />
+    <Compile Include="Model\Avatar.cs" />
     <Compile Include="Model\Card.cs" />
     <Compile Include="Model\CardData.cs" />
     <Compile Include="Model\GeekListException.cs" />
+    <Compile Include="Model\GeeklistItemType.cs" />
+    <Compile Include="Model\Gfk.cs" />
     <Compile Include="Model\OAuthAccessToken.cs" />
     <Compile Include="Model\OAuthRequestToken.cs" />
     <Compile Include="Model\Response.cs" />
