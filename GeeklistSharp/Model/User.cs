@@ -60,7 +60,7 @@ namespace GeeklistSharp.Model
         [DataMember(Name = "trending_at")]
         public string TrendingAt { get; set; }
 
-        [DataMember(Name = "trending_hist")]
+        //[DataMember(Name = "trending_hist")]
         public List<string> TrendingHistory { get; set; }
 	}
 
@@ -97,5 +97,22 @@ namespace GeeklistSharp.Model
         public List<string> AvailabeFor { get; set; }
     }
 
-    
+    [DataContract]
+    public class Stats
+    {
+        [DataMember(Name = "number_of_contributions")]
+        public long Views { get; set; }
+
+        [DataMember(Name = "number_of_highfives")]
+        public long HighFives { get; set; }
+
+        [DataMember(Name = "number_of_mentions")]
+        public long Mentions { get; set; }
+
+        [DataMember(Name = "number_of_cards")]
+        public long Cards { get; set; }
+
+        [DataMember(Name = "number_of_pings")]
+        public long Pings { get; set; }
+    }
 }

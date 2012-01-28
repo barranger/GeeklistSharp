@@ -189,7 +189,7 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void StatsDeserializeTest()
         {
-            string testStatsJson = @"{""highfives"":2,""views"":5}";
+            string testStatsJson = @"{""number_of_highfives"":2,""views"":5}";
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Stats));
 
             MemoryStream memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(testStatsJson));

@@ -6,6 +6,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GeeklistSharp.Service;
 using System.Diagnostics;
 using GeeklistSharp.Model;
+using System.IO;
+using System.Runtime.Serialization.Json;
 
 namespace GeeklistSharp.Tests
 {
@@ -48,7 +50,7 @@ namespace GeeklistSharp.Tests
             var uri = service.GetAuthorizationUrl(requestToken.Token);
             Process.Start(uri.ToString());
 
-            var verifyer = "9623666"; // <-- Debugger breakpoint and edit with the actual verifier
+            var verifyer = "3935346"; // <-- Debugger breakpoint and edit with the actual verifier
 
             OAuthAccessToken accessToken = service.GetAccessToken(requestToken, verifyer);
             Assert.IsNotNull(accessToken);
