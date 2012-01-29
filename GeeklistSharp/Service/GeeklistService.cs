@@ -416,7 +416,7 @@ namespace GeeklistSharp.Service
         #endregion
 
         #region HighFive
-        public object HighfiveItem(string id, GeeklistItemType type)
+        public object HighfiveItem(string id, string type)
         {
             if (string.IsNullOrEmpty(id))
             {
@@ -436,17 +436,8 @@ namespace GeeklistSharp.Service
                 Method = WebMethod.Post,
                 Path = "/highfive"
             };
-            string typeParameter;
-            switch(type){
-                case GeeklistItemType.Micro:
-                    typeParameter="micro";
-                    break;
-                case GeeklistItemType.Card:
-                default:
-                    typeParameter="card";
-                    break;
-            }
-            request.AddParameter("type", typeParameter);
+            
+            request.AddParameter("type", type);
             request.AddParameter("gfk", id);
             var response = _oauth.Request(request);
 

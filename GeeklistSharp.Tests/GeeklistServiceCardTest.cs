@@ -79,7 +79,7 @@ namespace GeeklistSharp.Tests
         {
             var service = GetAuthenticatedService();
 
-            var card = service.GetCard("146a1bcbe95def14a19a5441cbccb17f5b7b06b25b99396ac906872e584b268a");
+            var card = service.GetCard(TestConstants.CARDID);
 
             Assert.IsNotNull(card);
         }
