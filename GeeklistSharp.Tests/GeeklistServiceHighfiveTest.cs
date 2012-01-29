@@ -18,8 +18,6 @@ namespace GeeklistSharp.Tests
         private GeeklistService service;
         private Card card;
         
-
-
         //const string _testCardId = "25c31dfce3d67208330a6cb995fc517bc48deda5d63bf6a65b83637cec65f9db";
         const string _testMicroId = "c8a1d5e5d41bbcb6d29f6b63b1e9e6526e78ee25a7a0983ec63ff8a4b2275148";
 

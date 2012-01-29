@@ -9,6 +9,7 @@ namespace GeeklistSharp.Tests
 {
     public class GeeklistBaseTest
     {
+
         public GeeklistService GetAuthenticatedService()
         {
             string consumerKey = TestConstants.OAUTH_CONSUMER_KEY; // TODO: Initialize to an appropriate value
