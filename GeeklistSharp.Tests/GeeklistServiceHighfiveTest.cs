@@ -15,8 +15,10 @@ namespace GeeklistSharp.Tests
     [TestClass()]
     public class GeeklistServiceHighfiveTest : GeeklistBaseTest
     {
-        private GeeklistService _service;
-        private Card _card;
+        private GeeklistService service;
+        private Card card;
+        
+
 
         //const string _testCardId = "25c31dfce3d67208330a6cb995fc517bc48deda5d63bf6a65b83637cec65f9db";
         const string _testMicroId = "c8a1d5e5d41bbcb6d29f6b63b1e9e6526e78ee25a7a0983ec63ff8a4b2275148";
@@ -24,8 +26,8 @@ namespace GeeklistSharp.Tests
         [TestInitialize]
         public void Setup()
         {
-            _service = GetAuthenticatedService();
-            _card = (Card)_service.CreateCard("Test Card" + Guid.NewGuid());
+            service = GetAuthenticatedService();
+            card = (Card)service.CreateCard("Test Card " + Guid.NewGuid());
         }
         /// <summary>
         ///A test for ServiceHighfive to Highfive a given Card
@@ -34,7 +36,7 @@ namespace GeeklistSharp.Tests
         public void ServiceHighfiveCardTest()
         {
 
-            var returnStatus = _service.HighfiveItem(_card.Id, Service.GeeklistItemType.Card);
+            var returnStatus = service.HighfiveItem(card.Id, Service.GeeklistItemType.Card);
 
             Assert.IsNotNull(returnStatus);
         }
@@ -45,8 +47,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceHighfiveMicroTest()
         {
-            var service = GetAuthenticatedService();
-
             var returnStatus = service.HighfiveItem(_testMicroId, Service.GeeklistItemType.Micro);
 
             Assert.IsNotNull(returnStatus);

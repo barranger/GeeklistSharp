@@ -10,7 +10,7 @@ using GeeklistSharp.Model;
 namespace GeeklistSharp.Tests
 {
     [TestClass]
-    public class GeeklistServiceUserTest
+    public class GeeklistServiceUserTest : GeeklistBaseTest
     {
         [TestMethod]
         public void CurrentUserInfoTest()
@@ -35,41 +35,41 @@ namespace GeeklistSharp.Tests
             Assert.AreEqual(user.Name, "Barranger Ridler");
         }
 
-        private GeeklistService GetAndTestAuthenticatedService()
-        {
-            string consumerKey = TestConstants.OAUTH_CONSUMER_KEY; // TODO: Initialize to an appropriate value
-            string consumerSecret = TestConstants.OAUTH_CONSUMER_SECRET; // TODO: Initialize to an appropriate value
-            GeeklistService service = new GeeklistService(consumerKey, consumerSecret);
+        //private GeeklistService GetAndTestAuthenticatedService()
+        //{
+        //    string consumerKey = TestConstants.OAUTH_CONSUMER_KEY; // TODO: Initialize to an appropriate value
+        //    string consumerSecret = TestConstants.OAUTH_CONSUMER_SECRET; // TODO: Initialize to an appropriate value
+        //    GeeklistService service = new GeeklistService(consumerKey, consumerSecret);
 
-            var requestToken = service.GetRequestToken();
-            Assert.IsNotNull(requestToken);
-            Assert.IsFalse(requestToken.Token == "?" || requestToken.TokenSecret == "?");
+        //    var requestToken = service.GetRequestToken();
+        //    Assert.IsNotNull(requestToken);
+        //    Assert.IsFalse(requestToken.Token == "?" || requestToken.TokenSecret == "?");
 
-            var uri = service.GetAuthorizationUrl(requestToken.Token);
-            Process.Start(uri.ToString());
+        //    var uri = service.GetAuthorizationUrl(requestToken.Token);
+        //    Process.Start(uri.ToString());
 
-            var verifyer = "9623666"; // <-- Debugger breakpoint and edit with the actual verifier
+        //    var verifyer = "9623666"; // <-- Debugger breakpoint and edit with the actual verifier
 
-            OAuthAccessToken accessToken = service.GetAccessToken(requestToken, verifyer);
-            Assert.IsNotNull(accessToken);
-            Assert.IsFalse(accessToken.Token == "?" || accessToken.TokenSecret == "?");
+        //    OAuthAccessToken accessToken = service.GetAccessToken(requestToken, verifyer);
+        //    Assert.IsNotNull(accessToken);
+        //    Assert.IsFalse(accessToken.Token == "?" || accessToken.TokenSecret == "?");
 
-            service.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
-            return service;
-        }
+        //    service.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
+        //    return service;
+        //}
 
-        private GeeklistService GetAuthenticatedService()
-        {
-            string consumerKey = TestConstants.OAUTH_CONSUMER_KEY; // TODO: Initialize to an appropriate value
-            string consumerSecret = TestConstants.OAUTH_CONSUMER_SECRET; // TODO: Initialize to an appropriate value
-            string token = TestConstants.TOKEN; // TODO: Initialize to an appropriate value
-            string tokenSecret = TestConstants.TOKEN_SECRET; // TODO: Initialize to an appropriate value
-            GeeklistService service = new GeeklistService(consumerKey, consumerSecret);
+        //private GeeklistService GetAuthenticatedService()
+        //{
+        //    string consumerKey = TestConstants.OAUTH_CONSUMER_KEY; // TODO: Initialize to an appropriate value
+        //    string consumerSecret = TestConstants.OAUTH_CONSUMER_SECRET; // TODO: Initialize to an appropriate value
+        //    string token = TestConstants.TOKEN; // TODO: Initialize to an appropriate value
+        //    string tokenSecret = TestConstants.TOKEN_SECRET; // TODO: Initialize to an appropriate value
+        //    GeeklistService service = new GeeklistService(consumerKey, consumerSecret);
 
-            OAuthAccessToken accessToken = new OAuthAccessToken { Token = token, TokenSecret = tokenSecret };
+        //    OAuthAccessToken accessToken = new OAuthAccessToken { Token = token, TokenSecret = tokenSecret };
 
-            service.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
-            return service;
-        }
+        //    service.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
+        //    return service;
+        //}
     }
 }
