@@ -18,6 +18,13 @@ namespace GeeklistSharp.Tests
     [TestClass()]
     public class GeeklistServiceCardTest : GeeklistBaseTest
     {
+        private GeeklistService service;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            service = GetAuthenticatedService();
+        }
 
         /// <summary>
         ///A test for ServiceCards to get the Cards of the current User
@@ -25,8 +32,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceGetCurrentUsersCardsTest()
         {
-            var service = GetAuthenticatedService();
-
             var currentUsersCards = service.GetCurrentUsersCards();
 
             Assert.IsNotNull(currentUsersCards);
@@ -38,8 +43,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceGetCurrentUsersCardsPagedTest()
         {
-            var service = GetAuthenticatedService();
-
             var currentUsersCards = service.GetCurrentUsersCards(1,null);
 
             Assert.IsNotNull(currentUsersCards);
@@ -51,8 +54,7 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceGetCurrentUsersCardsCountTest()
         {
-            var service = GetAuthenticatedService();
-
+         
             var currentUsersCards = service.GetCurrentUsersCards(null, 5);
 
             Assert.IsNotNull(currentUsersCards);
@@ -64,8 +66,7 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceGetCurrentUsersCardsPagedCountTest()
         {
-            var service = GetAuthenticatedService();
-
+         
             var currentUsersCards = service.GetCurrentUsersCards(2, 5);
 
             Assert.IsNotNull(currentUsersCards);
@@ -77,8 +78,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceGetSpecificCardTest()
         {
-            var service = GetAuthenticatedService();
-
             var card = service.GetCard(TestConstants.CARDID);
 
             Assert.IsNotNull(card);
@@ -90,7 +89,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceCreateCardTest()
         {
-            var service = GetAuthenticatedService();
 
             var card = service.CreateCard("Unit Test Card" + Guid.NewGuid()) as Card;
 
