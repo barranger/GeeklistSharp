@@ -14,5 +14,18 @@ namespace GeeklistSharp.Model
 
 		[DataMember(Name = "data")]
 		public T Data { get; set; }
+
+        [DataMember(Name = "error")]
+        public Error Error { get; set; }
 	}
+
+    [DataContract]
+    public class Error
+    {
+        [DataMember(Name = "status")]
+        public string Status { get; set; }
+
+        [DataMember(Name = "error")]
+        public string Message { get; set; }
+    }
 }

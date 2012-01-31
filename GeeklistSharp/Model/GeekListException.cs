@@ -9,10 +9,15 @@ namespace GeeklistSharp.Model
 	{
 		public string Status { get; private set; }
 
-		public GeekListException(string status)
+        public Error Error { get; set; }
+
+		public GeekListException(string status, Error error)
 			: base(string.Format("API call resulted in status: {0}", status))
 		{
 			this.Status = status;
+            this.Error = error;
 		}
+
+       
 	}
 }

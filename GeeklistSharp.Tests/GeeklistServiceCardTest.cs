@@ -91,10 +91,18 @@ namespace GeeklistSharp.Tests
         public void ServiceCreateCardTest()
         {
             var service = GetAuthenticatedService();
+<<<<<<< HEAD
 
             var card = service.CreateCard("Unit Test Card" + Guid.NewGuid()) as Card;
 
             Assert.IsNotNull(card);
+=======
+            var msg = "Unit Test Card" + Guid.NewGuid().ToString();
+            var card = service.CreateCard(msg) as Card;
+
+            Assert.IsNotNull(card);
+            Assert.AreEqual(card.Headline, msg);
+>>>>>>> 7873753a59df53f588d4e3f425c5a96720b9d1bf
         }
 
 #region Card Serialization Tests
@@ -188,7 +196,7 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void StatsDeserializeTest()
         {
-            string testStatsJson = @"{""highfives"":2,""views"":5}";
+            string testStatsJson = @"{""number_of_highfives"":2,""views"":5}";
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Stats));
 
             MemoryStream memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(testStatsJson));
@@ -196,8 +204,8 @@ namespace GeeklistSharp.Tests
             Stats result = serializer.ReadObject(memoryStream) as Stats;
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.HighFives, 2);
-            Assert.AreEqual(result.Views, 5);
+            Assert.AreEqual(2, result.NumberOfHighFives);
+            Assert.AreEqual(5, result.Views);
         }
 
         /// <summary>

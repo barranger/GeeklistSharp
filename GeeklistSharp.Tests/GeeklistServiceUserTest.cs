@@ -6,6 +6,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GeeklistSharp.Service;
 using System.Diagnostics;
 using GeeklistSharp.Model;
+using System.IO;
+using System.Runtime.Serialization.Json;
 
 namespace GeeklistSharp.Tests
 {
@@ -21,6 +23,7 @@ namespace GeeklistSharp.Tests
 
             Assert.IsNotNull(currentUser);
             Assert.IsNotNull(currentUser.Name);
+            //Assert.AreNotEqual(currentUser.Stats.Views, 0);
         }
 
         [TestMethod]
@@ -33,6 +36,8 @@ namespace GeeklistSharp.Tests
             Assert.IsNotNull(user);
             Assert.AreEqual(user.ScreenName, "4MKMobile");
             Assert.AreEqual(user.Name, "Barranger Ridler");
+            //Assert.IsNotNull(user.Stats);
+            //Assert.AreNotEqual(user.Stats.Views, 0);
         }
 
         //private GeeklistService GetAndTestAuthenticatedService()
@@ -48,7 +53,11 @@ namespace GeeklistSharp.Tests
         //    var uri = service.GetAuthorizationUrl(requestToken.Token);
         //    Process.Start(uri.ToString());
 
+<<<<<<< HEAD
         //    var verifyer = "9623666"; // <-- Debugger breakpoint and edit with the actual verifier
+=======
+            var verifyer = "3935346"; // <-- Debugger breakpoint and edit with the actual verifier
+>>>>>>> 7873753a59df53f588d4e3f425c5a96720b9d1bf
 
         //    OAuthAccessToken accessToken = service.GetAccessToken(requestToken, verifyer);
         //    Assert.IsNotNull(accessToken);
