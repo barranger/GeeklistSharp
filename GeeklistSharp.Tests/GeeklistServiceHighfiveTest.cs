@@ -18,14 +18,20 @@ namespace GeeklistSharp.Tests
         const string testCardId = "25c31dfce3d67208330a6cb995fc517bc48deda5d63bf6a65b83637cec65f9db";
         const string testMicroId = "c8a1d5e5d41bbcb6d29f6b63b1e9e6526e78ee25a7a0983ec63ff8a4b2275148";
 
+        private GeeklistService service;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            service = GetAuthenticatedService();
+        }
+
         /// <summary>
         ///A test for ServiceHighfive to Highfive a given Card
         ///</summary>
         [TestMethod]
         public void ServiceHighfiveCardTest()
         {
-            var service = GetAuthenticatedService();
-
             try
             {
                 var returnStatus = service.HighfiveItem(testCardId, Service.GeeklistItemType.Card);
@@ -43,8 +49,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceHighfiveMicroTest()
         {
-            var service = GetAuthenticatedService();
-
             try
             {
                 var returnStatus = service.HighfiveItem(testMicroId, Service.GeeklistItemType.Micro);
