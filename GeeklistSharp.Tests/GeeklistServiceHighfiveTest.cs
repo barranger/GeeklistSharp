@@ -1,4 +1,3 @@
-
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,28 +15,26 @@ namespace GeeklistSharp.Tests
     [TestClass()]
     public class GeeklistServiceHighfiveTest : GeeklistBaseTest
     {
-        private GeeklistService service;
-        private Card card;
-        
-        //const string _testCardId = "25c31dfce3d67208330a6cb995fc517bc48deda5d63bf6a65b83637cec65f9db";
-        const string _testMicroId = "c8a1d5e5d41bbcb6d29f6b63b1e9e6526e78ee25a7a0983ec63ff8a4b2275148";
+        const string testCardId = "25c31dfce3d67208330a6cb995fc517bc48deda5d63bf6a65b83637cec65f9db";
+        const string testMicroId = "c8a1d5e5d41bbcb6d29f6b63b1e9e6526e78ee25a7a0983ec63ff8a4b2275148";
 
-        [TestInitialize]
-        public void Setup()
-        {
-            service = GetAuthenticatedService();
-            card = GetCardThroughActivity();
-        }
         /// <summary>
         ///A test for ServiceHighfive to Highfive a given Card
         ///</summary>
         [TestMethod]
         public void ServiceHighfiveCardTest()
         {
+            var service = GetAuthenticatedService();
 
-            var returnStatus = service.HighfiveItem(card.Id, Service.GeeklistItemType.Card);
-
-            Assert.IsNotNull(returnStatus);
+            try
+            {
+                var returnStatus = service.HighfiveItem(testCardId, Service.GeeklistItemType.Card);
+                Assert.IsNotNull(returnStatus);
+            }
+            catch (GeekListException gle)
+            {
+                Assert.AreEqual("Duplicate!", gle.Error);
+            }
         }
 
         /// <summary>
@@ -46,24 +43,19 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceHighfiveMicroTest()
         {
-            var returnStatus = service.HighfiveItem(_testMicroId, Service.GeeklistItemType.Micro);
+            var service = GetAuthenticatedService();
 
-            Assert.IsNotNull(returnStatus);
-        }
-
-
-        private Card GetCardThroughActivity()
-        {
-            var activities = (List<Activity>)service.GetAllActivities(1, 10);
-
-            var activity = activities.Where(a => a.Type == GeeklistItemType.Card).FirstOrDefault();
-
-            if (activity != null)
+            try
             {
-                return (Card)service.GetCard(activity.Id);
+                var returnStatus = service.HighfiveItem(testMicroId, Service.GeeklistItemType.Micro);
+                Assert.IsNotNull(returnStatus);
             }
-
-            return null;
+            catch (GeekListException gle)
+            {
+                Assert.AreEqual("Duplicate!", gle.Error);
+            }
         }
+
     }
 }
+

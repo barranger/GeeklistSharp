@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using Hammock;
 using Hammock.Authentication.OAuth;
@@ -14,594 +13,585 @@ using System.Diagnostics;
 
 namespace GeeklistSharp.Service
 {
-	public class GeeklistService
-	{
-		private static string _consumerKey;
-		private static string _consumerSecret;
-		private static string _callback;
+    public class GeeklistService
+    {
+        private static string _consumerKey;
+        private static string _consumerSecret;
+        private static string _callback;
 
-		private static string _token;
-		private static string _tokenSecret;
+        private static string _token;
+        private static string _tokenSecret;
 
-		private readonly RestClient _oauth;
+        private readonly RestClient _oauth;
 
-		public GeeklistService(string consumerKey, string consumerSecret, string callback = "oob")
-		{
-			_consumerKey = consumerKey;
-			_consumerSecret = consumerSecret;
-			_callback = callback;
+        static readonly Newtonsoft.Json.JsonSerializer serializer;
 
-			_oauth = new RestClient
-						{
-							Authority = Globals.RestAPIAuthority,
-							VersionPath = "v1",
-							UserAgent = "GeeklistSharp",
-						};
-		}
-
-		public OAuthRequestToken GetRequestToken()
-		{
-
-			var request = new RestRequest
-			{
-				Credentials = new OAuthCredentials
-				{
-					ConsumerKey = _consumerKey,
-					ConsumerSecret = _consumerSecret,
-					SignatureMethod = OAuthSignatureMethod.HmacSha1,
-					CallbackUrl = _callback,
-					Type = OAuthType.RequestToken
-				},
-				Method = WebMethod.Get,
-				Path = "/oauth/request_token"
-			};
-
-			var response = _oauth.Request(request);
-
-			var query = HttpUtility.ParseQueryString(response.Content);
-			var oauth = new OAuthRequestToken
-			{
-				Token = query["oauth_token"] ?? "?",
-				TokenSecret = query["oauth_token_secret"] ?? "?"
-			};
-
-			return oauth;
-		}
-
-		public Uri GetAuthorizationUrl(string token)
-		{
-			return new Uri("http://sandbox.geekli.st/oauth/authorize?oauth_token=" + token);
-		}
-
-		public OAuthAccessToken GetAccessToken(OAuthRequestToken requestToken, string verifyer)
-		{
-			var request = new RestRequest
-			{
-				Credentials = new OAuthCredentials
-				{
-					ConsumerKey = _consumerKey,
-					ConsumerSecret = _consumerSecret,
-					SignatureMethod = OAuthSignatureMethod.HmacSha1,
-					Token = requestToken.Token,
-					TokenSecret = requestToken.TokenSecret,
-					Verifier = verifyer,
-					Type = OAuthType.AccessToken
-				},
-				Method = WebMethod.Get,
-				Path = "/oauth/access_token"
-			};
-
-			var response = _oauth.Request(request);
-
-			var query = HttpUtility.ParseQueryString(response.Content);
-			var oauth = new OAuthAccessToken
-			{
-				Token = query["oauth_token"] ?? "?",
-				TokenSecret = query["oauth_token_secret"] ?? "?"
-			};
-
-			return oauth;
-		}
-
-		public void AuthenticateWith(string token, string tokenSecret)
-		{
-			_token = token;
-			_tokenSecret = tokenSecret;
-		}
-
-		public User GetUser(string name = null)
-		{
-			var path = name == null ? "/user" : "/users/" + name;
-			var request = new RestRequest
-			{
-				Credentials = new OAuthCredentials
-				{
-					ConsumerKey = _consumerKey,
-					ConsumerSecret = _consumerSecret,
-					SignatureMethod = OAuthSignatureMethod.HmacSha1,
-					Token = _token,
-					TokenSecret = _tokenSecret,
-					Type = OAuthType.ProtectedResource
-				},
-				Method = WebMethod.Get,
-				Path = path
-			};
-
-			var response = _oauth.Request(request);
-
-			var result = GetResponse<User>(response.ContentStream);
-
-			if (result.Status != "ok")
-			{
-				throw new GeekListException(result.Status, result.Error);
-			}
-
-			return result.Data;
-		}
-		
-#region Cards
-
-		public object GetCurrentUsersCards()
-		{
-			return GetCurrentUsersCards(null,null);
-		}
-
-		public object GetCurrentUsersCards(int? page,int? count)
-		{
-			var request = new RestRequest
-			{
-				Credentials = new OAuthCredentials
-				{
-					ConsumerKey = _consumerKey,
-					ConsumerSecret = _consumerSecret,
-					SignatureMethod = OAuthSignatureMethod.HmacSha1,
-					Token = _token,
-					TokenSecret = _tokenSecret,
-					Type = OAuthType.ProtectedResource
-				},
-				Method = WebMethod.Get,
-				Path = "/user/cards"
-			};
-
-			if (page.HasValue)
-			{
-				request.AddParameter("page",page.Value.ToString());
-			}
-			if (count.HasValue)
-			{
-				request.AddParameter("count", count.Value.ToString());
-			}
-
-			var response = _oauth.Request(request);
-
-			var result = GetResponse<CardData>(response.ContentStream);
-
-			if (result.Status != "ok")
-			{
-				throw new GeekListException(result.Status, result.Error);
-			}
-
-			return result.Data;
-		}
-
-		public object GetUsersCards(string userName)
-		{
-			return GetUsersCards(userName, null, null);
-		}
-
-		public object GetUsersCards(string userName, int? page, int? count)
-		{
-			var request = new RestRequest
-			{
-				Credentials = new OAuthCredentials
-				{
-					ConsumerKey = _consumerKey,
-					ConsumerSecret = _consumerSecret,
-					SignatureMethod = OAuthSignatureMethod.HmacSha1,
-					Token = _token,
-					TokenSecret = _tokenSecret,
-					Type = OAuthType.ProtectedResource
-				},
-				Method = WebMethod.Get,
-				Path = string.Format("/users/{0}/cards", userName)
-			};
-
-			if (page.HasValue)
-			{
-				request.AddParameter("page", page.Value.ToString());
-			}
-			if (count.HasValue)
-			{
-				request.AddParameter("count", count.Value.ToString());
-			}
-
-			var response = _oauth.Request(request);
-
-			var result = GetResponse<CardData>(response.ContentStream);
-
-			if (result.Status != "ok")
-			{
-				throw new GeekListException(result.Status, result.Error);
-			}
-
-			return result.Data;
-		}
-
-		public object GetCard(string id)
-		{
-			var request = new RestRequest
-			{
-				Credentials = new OAuthCredentials
-				{
-					ConsumerKey = _consumerKey,
-					ConsumerSecret = _consumerSecret,
-					SignatureMethod = OAuthSignatureMethod.HmacSha1,
-					Token = _token,
-					TokenSecret = _tokenSecret,
-					Type = OAuthType.ProtectedResource
-				},
-				Method = WebMethod.Get,
-				Path = string.Format("/cards/{0}", id)
-			};
-
-			var response = _oauth.Request(request);
-		    
-            try
+        static GeeklistService()
+        {
+            var settings = new Newtonsoft.Json.JsonSerializerSettings
             {
-                var result = GetResponse<Card>(response.ContentStream);
+            };
 
-                if (result.Status != "ok")
+            serializer = Newtonsoft.Json.JsonSerializer.Create(settings);
+        }
+
+        public GeeklistService(string consumerKey, string consumerSecret, string callback = "oob")
+        {
+            _consumerKey = consumerKey;
+            _consumerSecret = consumerSecret;
+            _callback = callback;
+
+            _oauth = new RestClient
+            {
+                Authority = Globals.RestAPIAuthority,
+                VersionPath = "v1",
+                UserAgent = "GeeklistSharp",
+            };
+        }
+
+        public OAuthRequestToken GetRequestToken()
+        {
+
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
                 {
-                    throw new GeekListException(result.Status, result.Error);
-                }
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    CallbackUrl = _callback,
+                    Type = OAuthType.RequestToken
+                },
+                Method = WebMethod.Get,
+                Path = "/oauth/request_token"
+            };
 
-                return result.Data;
-            }
-            catch (SerializationException err)
+            var response = _oauth.Request(request);
+
+            var query = HttpUtility.ParseQueryString(response.Content);
+            var oauth = new OAuthRequestToken
             {
-                string s = String.Empty;
-                //var result = GetResponse<Erro>()
-                //throw new GeekListException(resu);
+                Token = query["oauth_token"] ?? "?",
+                TokenSecret = query["oauth_token_secret"] ?? "?"
+            };
+
+            return oauth;
+        }
+
+        public Uri GetAuthorizationUrl(string token)
+        {
+            return new Uri("http://sandbox.geekli.st/oauth/authorize?oauth_token=" + token);
+        }
+
+        public OAuthAccessToken GetAccessToken(OAuthRequestToken requestToken, string verifyer)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = requestToken.Token,
+                    TokenSecret = requestToken.TokenSecret,
+                    Verifier = verifyer,
+                    Type = OAuthType.AccessToken
+                },
+                Method = WebMethod.Get,
+                Path = "/oauth/access_token"
+            };
+
+            var response = _oauth.Request(request);
+
+            var query = HttpUtility.ParseQueryString(response.Content);
+            var oauth = new OAuthAccessToken
+            {
+                Token = query["oauth_token"] ?? "?",
+                TokenSecret = query["oauth_token_secret"] ?? "?"
+            };
+
+            return oauth;
+        }
+
+        public void AuthenticateWith(string token, string tokenSecret)
+        {
+            _token = token;
+            _tokenSecret = tokenSecret;
+        }
+
+        public User GetUser(string name = null)
+        {
+            var path = name == null ? "/user" : "/users/" + name;
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = path
+            };
+
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<User>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status, result.Error);
             }
-		    return null;
-		}
 
-		public object CreateCard(string headline)
-		{
-			var request = new RestRequest
-			{
-				Credentials = new OAuthCredentials
-				{
-					ConsumerKey = _consumerKey,
-					ConsumerSecret = _consumerSecret,
-					SignatureMethod = OAuthSignatureMethod.HmacSha1,
-					Token = _token,
-					TokenSecret = _tokenSecret,
-					Type = OAuthType.ProtectedResource
-				},
-				Method = WebMethod.Post,
-				Path = "/cards"
-			};
+            return result.Data;
+        }
 
-			request.AddParameter("headline", headline);
-			var response = _oauth.Request(request);
+        #region Cards
 
-			var result = GetResponse<Card>(response.ContentStream);
+        public object GetCurrentUsersCards()
+        {
+            return GetCurrentUsersCards(null, null);
+        }
 
-			if (result.Status != "ok")
-			{
-				throw new GeekListException(result.Status, result.Error);
-			}
+        public object GetCurrentUsersCards(int? page, int? count)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = "/user/cards"
+            };
 
-			return result.Data;
-		}
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
 
-#endregion Cards
+            var response = _oauth.Request(request);
 
-#region Followers
+            var result = GetResponse<CardData>(response.ContentStream);
 
-		public FollowersData GetFollowers()
-		{
-			return GetFollowers(null);
-		}
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status, result.Error);
+            }
 
-		public FollowersData GetFollowers(string user)
-		{
-			return GetFollowers(user, 1, 10);
-		}
+            return result.Data;
+        }
 
-		public FollowersData GetFollowers(string user, int page, int pageSize)
-		{
-			var path = string.IsNullOrEmpty(user) ? "/user/followers" : string.Format("/users/{0}/followers", user);
+        public object GetUsersCards(string userName)
+        {
+            return GetUsersCards(userName, null, null);
+        }
 
-			var request = GetRequest(path);
+        public object GetUsersCards(string userName, int? page, int? count)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = string.Format("/users/{0}/cards", userName)
+            };
 
-			request.AddParameter("page", page.ToString());
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
 
-			request.AddParameter("count", pageSize.ToString());
+            var response = _oauth.Request(request);
 
-			var response = _oauth.Request(request);
+            var result = GetResponse<CardData>(response.ContentStream);
 
-			var result = GetResponse<FollowersData>(response.ContentStream);
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status, result.Error);
+            }
 
-			EnsureResponseOk(result);
+            return result.Data;
+        }
 
-			result.Data.PageNumber = page;
-			result.Data.PageSize = pageSize;
+        public object GetCard(string id)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = string.Format("/cards/{0}", id)
+            };
 
-			return result.Data;
-		}
+            var response = _oauth.Request(request);
 
-		public FollowingData GetFollowing()
-		{
-			return GetFollowing(null);
-		}
+            var result = GetResponse<Card>(response.ContentStream);
 
-		public FollowingData GetFollowing(string user)
-		{
-			return GetFollowing(user, 1, 10);
-		}
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status, result.Error);
+            }
 
-		public FollowingData GetFollowing(string user, int page, int pageSize)
-		{
-			var path = string.IsNullOrEmpty(user) ? "/user/following" : string.Format("/users/{0}/following", user);
+            return result.Data;
+        }
 
-			var request = GetRequest(path);
+        public object CreateCard(string headline)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Post,
+                Path = "/cards"
+            };
 
-			request.AddParameter("page", page.ToString());
+            request.AddParameter("headline", headline);
+            var response = _oauth.Request(request);
 
-			request.AddParameter("count", pageSize.ToString());
-			
-			var response = _oauth.Request(request);
-			
-			var result = GetResponse<FollowingData>(response.ContentStream);
+            var result = GetResponse<Card>(response.ContentStream);
 
-			EnsureResponseOk(result);
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status, result.Error);
+            }
 
-			result.Data.PageNumber = page;
-			result.Data.PageSize = pageSize;
+            return result.Data;
+        }
 
-			return result.Data;
-		}
-		
-		protected virtual Response<T> GetResponse<T>(Stream jsonStream)
-			where T : new()
-		{
-			var serializer = new DataContractJsonSerializer(typeof(Response<T>));
+        #endregion Cards
 
-			var result = (Response<T>)serializer.ReadObject(jsonStream);
+        #region Followers
 
-			return result;
-		}
+        public FollowersData GetFollowers()
+        {
+            return GetFollowers(null);
+        }
 
-		public void FollowUser(string userId)
-		{
-			var request = PostRequest("/follow");
+        public FollowersData GetFollowers(string user)
+        {
+            return GetFollowers(user, 1, 10);
+        }
 
-			request.AddParameter("user", userId);
-			request.AddParameter("action", "follow");
+        public FollowersData GetFollowers(string user, int page, int pageSize)
+        {
+            var path = string.IsNullOrEmpty(user) ? "/user/followers" : string.Format("/users/{0}/followers", user);
 
-			var response = _oauth.Request(request);
+            var request = GetRequest(path);
 
-			var result = GetResponse<object>(response.ContentStream);
+            request.AddParameter("page", page.ToString());
 
-			EnsureResponseOk(result);
-			
-		}
+            request.AddParameter("count", pageSize.ToString());
 
-		public void UnFollowUser(string userId)
-		{
-			var request = PostRequest("/follow");
+            var response = _oauth.Request(request);
 
-			request.AddParameter("user", userId);
-			
-			var response = _oauth.Request(request);
+            var result = GetResponse<FollowersData>(response.ContentStream);
 
-			var result = GetResponse<object>(response.ContentStream);
+            EnsureResponseOk(result);
 
-			EnsureResponseOk(result);
+            result.Data.PageNumber = page;
+            result.Data.PageSize = pageSize;
 
-		}
-#endregion followers
-		private static void EnsureResponseOk<T>(Response<T> result)
-		{
-			if (result.Status != "ok")
-			{
-				throw new GeekListException(result.Status, result.Error);
-			}
-		}
+            return result.Data;
+        }
 
-		private static RestRequest PostRequest(string path)
-		{
-			var request = new RestRequest
-			{
-				Credentials = new OAuthCredentials
-				{
-					ConsumerKey = _consumerKey,
-					ConsumerSecret = _consumerSecret,
-					SignatureMethod = OAuthSignatureMethod.HmacSha1,
-					Token = _token,
-					TokenSecret = _tokenSecret,
-					Type = OAuthType.ProtectedResource
-				},
-				Method = WebMethod.Post,
-				Path = path
-			};
+        public FollowingData GetFollowing()
+        {
+            return GetFollowing(null);
+        }
 
-			return request;
-		}
+        public FollowingData GetFollowing(string user)
+        {
+            return GetFollowing(user, 1, 10);
+        }
 
-		private static RestRequest GetRequest(string path)
-		{
-			var request = new RestRequest
-			{
-				Credentials = new OAuthCredentials
-				{
-					ConsumerKey = _consumerKey,
-					ConsumerSecret = _consumerSecret,
-					SignatureMethod = OAuthSignatureMethod.HmacSha1,
-					Token = _token,
-					TokenSecret = _tokenSecret,
-					Type = OAuthType.ProtectedResource
-				},
-				Method = WebMethod.Get,
-				Path = path
-			};
+        public FollowingData GetFollowing(string user, int page, int pageSize)
+        {
+            var path = string.IsNullOrEmpty(user) ? "/user/following" : string.Format("/users/{0}/following", user);
 
-			return request;
-		}
-		
-		#region Activity
-		public object GetCurrentUsersActivities()
-		{
-			return GetCurrentUsersActivities(null, null);
-		}
+            var request = GetRequest(path);
 
-		public object GetCurrentUsersActivities(int? page, int? count)
-		{
-			var request = new RestRequest
-			{
-				Credentials = new OAuthCredentials
-				{
-					ConsumerKey = _consumerKey,
-					ConsumerSecret = _consumerSecret,
-					SignatureMethod = OAuthSignatureMethod.HmacSha1,
-					Token = _token,
-					TokenSecret = _tokenSecret,
-					Type = OAuthType.ProtectedResource
-				},
-				Method = WebMethod.Get,
-				Path = "/user/activity"
-			};
+            request.AddParameter("page", page.ToString());
 
-			if (page.HasValue)
-			{
-				request.AddParameter("page", page.Value.ToString());
-			}
-			if (count.HasValue)
-			{
-				request.AddParameter("count", count.Value.ToString());
-			}
+            request.AddParameter("count", pageSize.ToString());
 
-			var response = _oauth.Request(request);
+            var response = _oauth.Request(request);
 
-			var result = GetResponse<CardData>(response.ContentStream);
+            var result = GetResponse<FollowingData>(response.ContentStream);
 
-			if (result.Status != "ok")
-			{
-				throw new GeekListException(result.Status, result.Error);
-			}
-			return result.Data;
-		}
+            EnsureResponseOk(result);
 
-		public object GetUsersActivities(string userName)
-		{
-			return GetUsersActivities(userName, null, null);
-		}
+            result.Data.PageNumber = page;
+            result.Data.PageSize = pageSize;
 
-		public object GetUsersActivities(string userName, int? page, int? count)
-		{
-			var request = new RestRequest
-			{
-				Credentials = new OAuthCredentials
-				{
-					ConsumerKey = _consumerKey,
-					ConsumerSecret = _consumerSecret,
-					SignatureMethod = OAuthSignatureMethod.HmacSha1,
-					Token = _token,
-					TokenSecret = _tokenSecret,
-					Type = OAuthType.ProtectedResource
-				},
-				Method = WebMethod.Get,
-				Path = string.Format("/users/{0}/activity", userName)
-			};
+            return result.Data;
+        }
 
-			if (page.HasValue)
-			{
-				request.AddParameter("page", page.Value.ToString());
-			}
-			if (count.HasValue)
-			{
-				request.AddParameter("count", count.Value.ToString());
-			}
+        protected virtual Response<T> GetResponse<T>(Stream jsonStream)
+        {
+            var streamReader = new StreamReader(jsonStream);
 
-			var response = _oauth.Request(request);
+            var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader);
 
-			var result = GetResponse<List<Activity>>(response.ContentStream);
+            var result = serializer.Deserialize<Response<T>>(jsonTextReader);
 
-			if (result.Status != "ok")
-			{
-				throw new GeekListException(result.Status, result.Error);
-			}
+            return result;
+        }
 
-			return result.Data;
-		}       
-		public object GetAllActivities()
-		{
-			return GetAllActivities(null, null);
-		}
+        public void FollowUser(string userId)
+        {
+            var request = PostRequest("/follow");
 
-		public object GetAllActivities(int? page, int? count)
-		{
-			var request = GetRequest("/activity");
+            request.AddParameter("user", userId);
+            request.AddParameter("action", "follow");
 
-			if (page.HasValue)
-			{
-				request.AddParameter("page", page.Value.ToString());
-			}
-			if (count.HasValue)
-			{
-				request.AddParameter("count", count.Value.ToString());
-			}
+            var response = _oauth.Request(request);
 
-			var response = _oauth.Request(request);
+            var result = GetResponse<object>(response.ContentStream);
 
-			var result = GetResponse<List<Activity>>(response.ContentStream);
+            EnsureResponseOk(result);
 
-			if (result.Status != "ok")
-			{
-				throw new GeekListException(result.Status, result.Error);
-			}
+        }
 
-			return result.Data;
-		}
-		#endregion
+        public void UnFollowUser(string userId)
+        {
+            var request = PostRequest("/follow");
 
-		#region HighFive
-		public object HighfiveItem(string id, string type)
-		{
-			if (string.IsNullOrEmpty(id))
-			{
-				throw new ArgumentException("Invalid id","id");
-			}
+            request.AddParameter("user", userId);
 
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<object>(response.ContentStream);
+
+            EnsureResponseOk(result);
+
+        }
+        #endregion followers
+        private static void EnsureResponseOk<T>(Response<T> result)
+        {
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status, result.Error);
+            }
+        }
+
+        private static RestRequest PostRequest(string path)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Post,
+                Path = path
+            };
+
+            return request;
+        }
+
+        private static RestRequest GetRequest(string path)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = path
+            };
+
+            return request;
+        }
+
+        #region Activity
+        public object GetCurrentUsersActivities()
+        {
+            return GetCurrentUsersActivities(null, null);
+        }
+
+        public object GetCurrentUsersActivities(int? page, int? count)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = "/user/activity"
+            };
+
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
+
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<Card[]>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status, result.Error);
+            }
+            return result.Data;
+        }
+
+        public object GetUsersActivities(string userName)
+        {
+            return GetUsersActivities(userName, null, null);
+        }
+
+        public object GetUsersActivities(string userName, int? page, int? count)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = string.Format("/users/{0}/activity", userName)
+            };
+
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
+
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<List<Activity>>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status, result.Error);
+            }
+
+            return result.Data;
+        }
+        public object GetAllActivities()
+        {
+            return GetAllActivities(null, null);
+        }
+
+        public object GetAllActivities(int? page, int? count)
+        {
+            var request = GetRequest("/activity");
+
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
+
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<List<Activity>>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status, result.Error);
+            }
+
+            return result.Data;
+        }
+        #endregion
+
+        #region HighFive
+        public object HighfiveItem(string id, string type)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentException("Invalid id", "id");
+            }
             var request = PostRequest("/highfive");
-			  
-			string typeParameter;
-			switch(type){
-				case GeeklistItemType.Micro:
-					typeParameter="micro";
-					break;
-				case GeeklistItemType.Card:
-				default:
-					typeParameter="card";
-					break;
-			}
 
-			request.AddParameter("type", typeParameter);
+            
 
-			request.AddParameter("gfk", id);
-			var response = _oauth.Request(request);
+            request.AddParameter("type", type);
+            request.AddParameter("gfk", id);
+            var response = _oauth.Request(request);
 
-			var result = GetResponse<Card>(response.ContentStream);
+            var result = GetResponse<Card>(response.ContentStream);
 
-			if (result.Status != "ok")
-			{
-				throw new GeekListException(result.Status, result.Error);
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status, result.Error);
 
-			}
-			return result.Data;
-		}
-#endregion
-	}
+            }
+            return result.Data;
+        }
+        #endregion
+    }
 }

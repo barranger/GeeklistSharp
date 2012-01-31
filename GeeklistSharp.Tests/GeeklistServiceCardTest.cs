@@ -105,11 +105,8 @@ namespace GeeklistSharp.Tests
         public void CardsDeserializeTest()
         {
             string testCardsJson = @"{""status"":""ok"",""data"":{""total_cards"":2,""cards"":[{""updated_at"":""2012-01-27T03:01:11.827Z"",""permalink"":""/lsmithmier/test-2-for-c-api-wrapper"",""slug"":""test-2-for-c-api-wrapper"",""author_id"":""e47163371a660b6eca2b7935ec31f058648175377b290fb039229b3a08971890"",""headline"":""Test 2 for C# API Wrapper"",""trending_hist"":[],""trending_at"":""2012-01-27T03:01:11.747Z"",""created_at"":""2012-01-27T03:01:11.747Z"",""is_trending"":false,""is_active"":true,""skills"":[],""tasks"":[],""stats"":{""highfives"":0,""views"":0},""short_code"":{""id"":""146a1bcbe95def14a19a5441cbccb17ffd582bc0b674755f2a5aedfdb7843068"",""gklst_url"":""http://gkl.st/Xcxn4""},""id"":""146a1bcbe95def14a19a5441cbccb17f5b7b06b25b99396ac906872e584b268a""},{""author_id"":""e47163371a660b6eca2b7935ec31f058648175377b290fb039229b3a08971890"",""created_at"":""2012-01-27T03:00:46.413Z"",""headline"":""Test for C# API Wrapper"",""is_active"":true,""is_trending"":false,""permalink"":""/lsmithmier/test-for-c-api-wrapper"",""skills"":[""C#"",""Visual Studio""],""slug"":""test-for-c-api-wrapper"",""tasks"":[""did some test data entry"",""tested the code"",""built some more code""],""trending_at"":""2012-01-27T03:00:46.413Z"",""trending_hist"":[],""updated_at"":""2012-01-27T03:49:43.128Z"",""stats"":{""highfives"":0,""views"":0},""short_code"":{""id"":""a55109fad7c9b6a330099bf9d48e13ecfcc688b8dce7a67cf61f56155b66ab71"",""gklst_url"":""http://gkl.st/J1h-i""},""id"":""a55109fad7c9b6a330099bf9d48e13ece0cedf364a511b3b1a06e749a2ab8e1f""}]}}";
-            var serializer = new DataContractJsonSerializer(typeof(Response<CardData>));
 
-            MemoryStream memoryStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(testCardsJson));
-
-            var result = serializer.ReadObject(memoryStream) as Response<CardData>;
+            var result = TestConstants.DeserializeFromStream<Response<CardData>>(testCardsJson);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.Status, "ok");
@@ -123,21 +120,18 @@ namespace GeeklistSharp.Tests
         public void CardDataDeserializeTest()
         {
             string testCardDataJson = @"{""total_cards"":2,""cards"":[{""updated_at"":""2012-01-27T03:01:11.827Z"",""permalink"":""/lsmithmier/test-2-for-c-api-wrapper"",""slug"":""test-2-for-c-api-wrapper"",""author_id"":""e47163371a660b6eca2b7935ec31f058648175377b290fb039229b3a08971890"",""headline"":""Test 2 for C# API Wrapper"",""trending_hist"":[],""trending_at"":""2012-01-27T03:01:11.747Z"",""created_at"":""2012-01-27T03:01:11.747Z"",""is_trending"":false,""is_active"":true,""skills"":[],""tasks"":[],""stats"":{""highfives"":0,""views"":0},""short_code"":{""id"":""146a1bcbe95def14a19a5441cbccb17ffd582bc0b674755f2a5aedfdb7843068"",""gklst_url"":""http://gkl.st/Xcxn4""},""id"":""146a1bcbe95def14a19a5441cbccb17f5b7b06b25b99396ac906872e584b268a""},{""author_id"":""e47163371a660b6eca2b7935ec31f058648175377b290fb039229b3a08971890"",""created_at"":""2012-01-27T03:00:46.413Z"",""headline"":""Test for C# API Wrapper"",""is_active"":true,""is_trending"":false,""permalink"":""/lsmithmier/test-for-c-api-wrapper"",""skills"":[""C#"",""Visual Studio""],""slug"":""test-for-c-api-wrapper"",""tasks"":[""did some test data entry"",""tested the code"",""built some more code""],""trending_at"":""2012-01-27T03:00:46.413Z"",""trending_hist"":[],""updated_at"":""2012-01-27T03:49:43.128Z"",""stats"":{""highfives"":0,""views"":0},""short_code"":{""id"":""a55109fad7c9b6a330099bf9d48e13ecfcc688b8dce7a67cf61f56155b66ab71"",""gklst_url"":""http://gkl.st/J1h-i""},""id"":""a55109fad7c9b6a330099bf9d48e13ece0cedf364a511b3b1a06e749a2ab8e1f""}]}";
-            var serializer = new DataContractJsonSerializer(typeof(CardData));
 
-            MemoryStream memoryStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(testCardDataJson));
-
-            var result = serializer.ReadObject(memoryStream) as CardData;
+            var result = TestConstants.DeserializeFromStream<CardData>(testCardDataJson);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.Cards[0].UpdatedAt, "2012-01-27T03:01:11.827Z");
+            Assert.AreEqual(result.Cards[0].UpdatedAt, DateTime.Parse("2012-01-27T03:01:11.827Z"));
             Assert.AreEqual(result.Cards[0].Permalink, "/lsmithmier/test-2-for-c-api-wrapper");
             Assert.AreEqual(result.Cards[0].Slug, "test-2-for-c-api-wrapper");
             Assert.AreEqual(result.Cards[0].AuthorId, "e47163371a660b6eca2b7935ec31f058648175377b290fb039229b3a08971890");
             Assert.AreEqual(result.Cards[0].Headline, "Test 2 for C# API Wrapper");
             Assert.AreEqual(result.Cards[0].TrendingHist.Count, 0);
-            Assert.AreEqual(result.Cards[0].TrendingAt, "2012-01-27T03:01:11.747Z");
-            Assert.AreEqual(result.Cards[0].CreatedAt, "2012-01-27T03:01:11.747Z");
+            Assert.AreEqual(result.Cards[0].TrendingAt, DateTime.Parse("2012-01-27T03:01:11.747Z"));
+            Assert.AreEqual(result.Cards[0].CreatedAt, DateTime.Parse("2012-01-27T03:01:11.747Z"));
             Assert.AreEqual(result.Cards[0].IsTrending, false);
             Assert.AreEqual(result.Cards[0].IsActive, true);
             Assert.AreEqual(result.Cards[0].Skills.Count, 0);
@@ -156,21 +150,18 @@ namespace GeeklistSharp.Tests
         public void CardDeserializeTest()
         {
             string testCardJson = @"{""updated_at"":""2012-01-27T03:01:11.827Z"",""permalink"":""/lsmithmier/test-2-for-c-api-wrapper"",""slug"":""test-2-for-c-api-wrapper"",""author_id"":""e47163371a660b6eca2b7935ec31f058648175377b290fb039229b3a08971890"",""headline"":""Test 2 for C# API Wrapper"",""trending_hist"":[],""trending_at"":""2012-01-27T03:01:11.747Z"",""created_at"":""2012-01-27T03:01:11.747Z"",""is_trending"":false,""is_active"":true,""skills"":[],""tasks"":[],""stats"":{""highfives"":0,""views"":0},""short_code"":{""id"":""146a1bcbe95def14a19a5441cbccb17ffd582bc0b674755f2a5aedfdb7843068"",""gklst_url"":""http://gkl.st/Xcxn4""},""id"":""146a1bcbe95def14a19a5441cbccb17f5b7b06b25b99396ac906872e584b268a""}";
-            var serializer = new DataContractJsonSerializer(typeof(Card));
 
-            MemoryStream memoryStream = new System.IO.MemoryStream(System.Text.Encoding.UTF8.GetBytes(testCardJson));
-
-            var result = serializer.ReadObject(memoryStream) as Card;
+            var result = TestConstants.DeserializeFromStream<Card>(testCardJson);
 
             Assert.IsNotNull(result);
-            Assert.AreEqual(result.UpdatedAt, "2012-01-27T03:01:11.827Z");
+            Assert.AreEqual(result.UpdatedAt, DateTime.Parse("2012-01-27T03:01:11.827Z"));
             Assert.AreEqual(result.Permalink, "/lsmithmier/test-2-for-c-api-wrapper");
             Assert.AreEqual(result.Slug, "test-2-for-c-api-wrapper");
             Assert.AreEqual(result.AuthorId, "e47163371a660b6eca2b7935ec31f058648175377b290fb039229b3a08971890");
             Assert.AreEqual(result.Headline, "Test 2 for C# API Wrapper");
             Assert.AreEqual(result.TrendingHist.Count, 0);
-            Assert.AreEqual(result.TrendingAt, "2012-01-27T03:01:11.747Z");
-            Assert.AreEqual(result.CreatedAt, "2012-01-27T03:01:11.747Z");
+            Assert.AreEqual(result.TrendingAt, DateTime.Parse("2012-01-27T03:01:11.747Z"));
+            Assert.AreEqual(result.CreatedAt, DateTime.Parse("2012-01-27T03:01:11.747Z"));
             Assert.AreEqual(result.IsTrending, false);
             Assert.AreEqual(result.IsActive, true);
             Assert.AreEqual(result.Skills.Count, 0);
@@ -189,11 +180,8 @@ namespace GeeklistSharp.Tests
         public void StatsDeserializeTest()
         {
             string testStatsJson = @"{""number_of_highfives"":2,""views"":5}";
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Stats));
 
-            MemoryStream memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(testStatsJson));
-
-            Stats result = serializer.ReadObject(memoryStream) as Stats;
+            Stats result = TestConstants.DeserializeFromStream<Stats>(testStatsJson);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(2, result.NumberOfHighFives);
@@ -207,11 +195,8 @@ namespace GeeklistSharp.Tests
         public void ShortCodeDeserializeTest()
         {
             string testShortCodeJson = @"{""id"":""146a1bcbe95def14a19a5441cbccb17ffd582bc0b674755f2a5aedfdb7843068"",""gklst_url"":""http://gkl.st/Xcxn4""}";
-            var serializer = new DataContractJsonSerializer(typeof(ShortCode));
 
-            MemoryStream memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(testShortCodeJson));
-
-            var result = serializer.ReadObject(memoryStream) as ShortCode;
+            var result = TestConstants.DeserializeFromStream<ShortCode>(testShortCodeJson);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.Id, "146a1bcbe95def14a19a5441cbccb17ffd582bc0b674755f2a5aedfdb7843068");
