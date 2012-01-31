@@ -16,7 +16,7 @@ namespace GeeklistSharp.Model
 		public T Data { get; set; }
 
         [DataMember(Name = "error")]
-        public Error Error { get; set; }
+        public string Error { get; set; }
 	}
 
     [DataContract]
