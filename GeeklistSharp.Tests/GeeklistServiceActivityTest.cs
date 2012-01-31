@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using GeeklistSharp.Model;
+using GeeklistSharp.Service;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Runtime.Serialization.Json;
 
@@ -16,14 +17,20 @@ namespace GeeklistSharp.Tests
     [TestClass()]
     public class GeeklistServiceActivityTest : GeeklistBaseTest
     {
+        private GeeklistService service;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            service = GetAuthenticatedService();
+        }
+
         /// <summary>
         ///A test for ServiceActivities to get the Activities of the current User
         ///</summary>
         [TestMethod]
         public void ServiceGetCurrentUsersActivitiesTest()
         {
-            var service = GetAuthenticatedService();
-
             var returnStatus = service.GetCurrentUsersActivities();
 
             Assert.IsNotNull(returnStatus);
@@ -35,8 +42,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceGetCurrentUsersActivitiesPagedTest()
         {
-            var service = GetAuthenticatedService();
-
             var currentUsersActivities = service.GetCurrentUsersActivities(1, null);
 
             Assert.IsNotNull(currentUsersActivities);
@@ -48,8 +53,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceGetCurrentUsersActivitiesCountTest()
         {
-            var service = GetAuthenticatedService();
-
             var currentUsersActivities = service.GetCurrentUsersActivities(null, 5);
 
             Assert.IsNotNull(currentUsersActivities);
@@ -61,8 +64,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceGetCurrentUsersActivitiesPagedCountTest()
         {
-            var service = GetAuthenticatedService();
-
             var currentUsersActivities = service.GetCurrentUsersActivities(2, 5);
 
             Assert.IsNotNull(currentUsersActivities);
@@ -74,8 +75,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceGetUsersActivitiesTest()
         {
-            var service = GetAuthenticatedService();
-
             var usersActivities = service.GetUsersActivities("oakcool");
 
             Assert.IsNotNull(usersActivities);
@@ -87,8 +86,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceGetUsersActivitiesPagedTest()
         {
-            var service = GetAuthenticatedService();
-
             var usersActivities = service.GetUsersActivities("oakcool", 1, null);
 
             Assert.IsNotNull(usersActivities);
@@ -100,8 +97,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceGetUsersActivitiesCountTest()
         {
-            var service = GetAuthenticatedService();
-
             var usersActivities = service.GetUsersActivities("oakcool", null, 5);
 
             Assert.IsNotNull(usersActivities);
@@ -113,8 +108,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceGetUsersActivitiesPagedCountTest()
         {
-            var service = GetAuthenticatedService();
-
             var usersActivities = service.GetUsersActivities("oakcool", 2, 5);
 
             Assert.IsNotNull(usersActivities);
