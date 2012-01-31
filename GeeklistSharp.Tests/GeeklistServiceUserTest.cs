@@ -14,11 +14,17 @@ namespace GeeklistSharp.Tests
     [TestClass]
     public class GeeklistServiceUserTest : GeeklistBaseTest
     {
+        private GeeklistService service;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            service = GetAuthenticatedService();
+        }
+
         [TestMethod]
         public void CurrentUserInfoTest()
         {
-            var service = GetAuthenticatedService();
-
             var currentUser = service.GetUser();
 
             Assert.IsNotNull(currentUser);
@@ -29,8 +35,6 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void UserByNameInfoTest()
         {
-            var service = GetAuthenticatedService();
-
             var user = service.GetUser("4mkmobile");
 
             Assert.IsNotNull(user);
