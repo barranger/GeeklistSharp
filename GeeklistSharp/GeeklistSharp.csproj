@@ -50,6 +50,7 @@
     <Compile Include="Model\Card.cs" />
     <Compile Include="Model\CardData.cs" />
     <Compile Include="Model\FollowersData.cs" />
+    <Compile Include="Model\GeeklistError.cs" />
     <Compile Include="Model\GeekListException.cs" />
     <Compile Include="Model\GeeklistItemType.cs" />
     <Compile Include="Model\Gfk.cs" />
