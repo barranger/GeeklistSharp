@@ -91,18 +91,10 @@ namespace GeeklistSharp.Tests
         public void ServiceCreateCardTest()
         {
             var service = GetAuthenticatedService();
-<<<<<<< HEAD
 
             var card = service.CreateCard("Unit Test Card" + Guid.NewGuid()) as Card;
 
             Assert.IsNotNull(card);
-=======
-            var msg = "Unit Test Card" + Guid.NewGuid().ToString();
-            var card = service.CreateCard(msg) as Card;
-
-            Assert.IsNotNull(card);
-            Assert.AreEqual(card.Headline, msg);
->>>>>>> 7873753a59df53f588d4e3f425c5a96720b9d1bf
         }
 
 #region Card Serialization Tests
