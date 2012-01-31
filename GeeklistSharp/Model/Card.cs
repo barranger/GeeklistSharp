@@ -35,10 +35,10 @@ namespace GeeklistSharp.Model
 		public string AuthorId { get; set; }
 
 		[DataMember(Name="created_at")]
-		public string CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
 		[DataMember(Name = "happened_at")]
-		public string HappenedAt { get; set; }
+        public DateTime HappenedAt { get; set; }
 
 		[DataMember(Name = "happened_at_type")]
 		public string HappenedAtType { get; set; }
@@ -59,7 +59,7 @@ namespace GeeklistSharp.Model
         public List<string> Tasks { get; set; }
 
 		[DataMember(Name = "updated_at")]
-		public string UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
 		[DataMember(Name = "stats")]
 		public Stats Stats { get; set; }
@@ -71,7 +71,7 @@ namespace GeeklistSharp.Model
         public List<string> TrendingHist { get; set; }
 
 		[DataMember(Name = "trending_at")]
-		public string TrendingAt { get; set; }
+        public DateTime? TrendingAt { get; set; }
 
 		[DataMember(Name = "is_trending")]
 		public bool IsTrending { get; set; }

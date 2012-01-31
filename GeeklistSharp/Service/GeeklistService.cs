@@ -24,6 +24,17 @@ namespace GeeklistSharp.Service
 
         private readonly RestClient _oauth;
 
+        static readonly Newtonsoft.Json.JsonSerializer serializer;
+
+        static GeeklistService()
+        {
+            var settings = new Newtonsoft.Json.JsonSerializerSettings
+            {
+            };
+
+            serializer = Newtonsoft.Json.JsonSerializer.Create(settings);
+        }
+
         public GeeklistService(string consumerKey, string consumerSecret, string callback = "oob")
         {
             _consumerKey = consumerKey;
@@ -354,11 +365,12 @@ namespace GeeklistSharp.Service
 		}
         
         protected virtual Response<T> GetResponse<T>(Stream jsonStream)
-			where T : new()
 		{
-			var serializer = new DataContractJsonSerializer(typeof(Response<T>));
+            var streamReader = new StreamReader(jsonStream);
 
-			var result = (Response<T>)serializer.ReadObject(jsonStream);
+            var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader);
+
+            var result = serializer.Deserialize<Response<T>>(jsonTextReader);
 
 			return result;
 		}
@@ -474,7 +486,7 @@ namespace GeeklistSharp.Service
 
             var response = _oauth.Request(request);
 
-            var result = GetResponse<CardData>(response.ContentStream);
+            var result = GetResponse<Card[]>(response.ContentStream);
 
             if (result.Status != "ok")
             {

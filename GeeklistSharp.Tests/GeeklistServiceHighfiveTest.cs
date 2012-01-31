@@ -32,7 +32,7 @@ namespace GeeklistSharp.Tests
             }
             catch (GeekListException gle)
             {
-                Assert.AreEqual("Duplicate!", gle.Error.Message);
+                Assert.AreEqual("Duplicate!", gle.Error);
             }
         }
 
@@ -51,7 +51,7 @@ namespace GeeklistSharp.Tests
             }
             catch (GeekListException gle)
             {
-                Assert.AreEqual("Duplicate!", gle.Error.Message);
+                Assert.AreEqual("Duplicate!", gle.Error);
             }
         }
 
