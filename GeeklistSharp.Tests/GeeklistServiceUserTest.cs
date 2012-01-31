@@ -53,11 +53,7 @@ namespace GeeklistSharp.Tests
         //    var uri = service.GetAuthorizationUrl(requestToken.Token);
         //    Process.Start(uri.ToString());
 
-<<<<<<< HEAD
-        //    var verifyer = "9623666"; // <-- Debugger breakpoint and edit with the actual verifier
-=======
-            var verifyer = "3935346"; // <-- Debugger breakpoint and edit with the actual verifier
->>>>>>> 7873753a59df53f588d4e3f425c5a96720b9d1bf
+//            var verifyer = "3935346"; // <-- Debugger breakpoint and edit with the actual verifier
 
         //    OAuthAccessToken accessToken = service.GetAccessToken(requestToken, verifyer);
         //    Assert.IsNotNull(accessToken);
