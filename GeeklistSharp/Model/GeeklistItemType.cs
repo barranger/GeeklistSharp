@@ -1,8 +1,8 @@
 ﻿namespace GeeklistSharp.Service
 {
-    public enum GeeklistItemType
+    public class GeeklistItemType
     {
-        Card,
-        Micro
+        public const string Card = "card";
+        public const string Micro = "micro";
     }
 }

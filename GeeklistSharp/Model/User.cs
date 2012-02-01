@@ -49,16 +49,16 @@ namespace GeeklistSharp.Model
         public bool IsBeta { get; set; }
 
         [DataMember(Name = "created_at")]
-        public string CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         [DataMember(Name = "updated_at")]
-        public string UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         [DataMember(Name = "active_at")]
-        public string ActiveAt { get; set; }
+        public DateTime? ActiveAt { get; set; }
         
         [DataMember(Name = "trending_at")]
-        public string TrendingAt { get; set; }
+        public DateTime? TrendingAt { get; set; }
 
         //[DataMember(Name = "trending_hist")]
         public List<string> TrendingHistory { get; set; }

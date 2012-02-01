@@ -22,11 +22,8 @@ namespace GeeklistSharp.Tests
         public void ShouldDeSerializeFollowingData()
         {
             string testStatsJson = @"{""status"":""ok"",""data"":{""total_following"":1,""following"":[{ }] } }";
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Response<FollowingData>));
 
-            MemoryStream memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(testStatsJson));
-
-            var result = serializer.ReadObject(memoryStream) as Response<FollowingData>;
+            var result = TestConstants.DeserializeFromStream<Response<FollowingData>>(testStatsJson);
 
             Assert.AreEqual(1, result.Data.TotalFollowing);
             Assert.AreEqual(1, result.Data.Following.Count());
@@ -36,11 +33,8 @@ namespace GeeklistSharp.Tests
         public void ShouldDeSerializeFollowerData()
         {
             string testStatsJson = @"{""status"":""ok"",""data"":{""total_followers"":1,""followers"":[{ }] } }";
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Response<FollowersData>));
 
-            MemoryStream memoryStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(testStatsJson));
-
-            var result = serializer.ReadObject(memoryStream) as Response<FollowersData>;
+            var result = TestConstants.DeserializeFromStream<Response<FollowersData>>(testStatsJson);
 
             Assert.AreEqual(1, result.Data.TotalFollowers);
             Assert.AreEqual(1, result.Data.Followers.Count());
