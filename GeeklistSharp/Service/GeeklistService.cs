@@ -17,17 +17,6 @@ namespace GeeklistSharp.Service
     {
         private static RestApiWrapper api;
 
-        static readonly Newtonsoft.Json.JsonSerializer serializer;
-
-        static GeeklistService()
-        {
-            var settings = new Newtonsoft.Json.JsonSerializerSettings
-            {
-            };
-
-            serializer = Newtonsoft.Json.JsonSerializer.Create(settings);
-        }
-
         public GeeklistService(string consumerKey, string consumerSecret, string callback = "oob")
         {
             api = new RestApiWrapper(consumerKey, consumerSecret, callback);
@@ -86,16 +75,7 @@ namespace GeeklistSharp.Service
         {
             var request = api.CreateAuthenticatedRequest(name == null ? "/user" : "/users/" + name);
 
-            var response = api.Request(request);
-
-            var result = GetResponse<User>(response.ContentStream);
-
-            if (result.Status != "ok")
-            {
-                throw new GeekListException(result.Status, result.Error);
-            }
-
-            return result.Data;
+            return api.GetResults<User>(request);
         }
         #endregion user
 
@@ -119,16 +99,7 @@ namespace GeeklistSharp.Service
                 request.AddParameter("count", count.Value.ToString());
             }
 
-            var response = api.Request(request);
-
-            var result = GetResponse<CardData>(response.ContentStream);
-
-            if (result.Status != "ok")
-            {
-                throw new GeekListException(result.Status, result.Error);
-            }
-
-            return result.Data;
+            return api.GetResults<CardData>(request);
         }
 
         public object GetUsersCards(string userName)
@@ -149,32 +120,14 @@ namespace GeeklistSharp.Service
                 request.AddParameter("count", count.Value.ToString());
             }
 
-            var response = api.Request(request);
-
-            var result = GetResponse<CardData>(response.ContentStream);
-
-            if (result.Status != "ok")
-            {
-                throw new GeekListException(result.Status, result.Error);
-            }
-
-            return result.Data;
+            return api.GetResults<CardData>(request);
         }
 
         public object GetCard(string id)
         {
             var request = api.CreateAuthenticatedRequest(string.Format("/cards/{0}", id));
 
-            var response = api.Request(request);
-
-            var result = GetResponse<Card>(response.ContentStream);
-
-            if (result.Status != "ok")
-            {
-                throw new GeekListException(result.Status, result.Error);
-            }
-
-            return result.Data;
+            return api.GetResults<Card>(request);
         }
 
         public object CreateCard(string headline)
@@ -182,16 +135,7 @@ namespace GeeklistSharp.Service
             var request = api.CreateAuthenticatedRequest("/cards", WebMethod.Post);
 
             request.AddParameter("headline", headline);
-            var response = api.Request(request);
-
-            var result = GetResponse<Card>(response.ContentStream);
-
-            if (result.Status != "ok")
-            {
-                throw new GeekListException(result.Status, result.Error);
-            }
-
-            return result.Data;
+            return api.GetResults<Card>(request);
         }
 
         #endregion Cards
@@ -215,19 +159,14 @@ namespace GeeklistSharp.Service
             var request = api.CreateAuthenticatedRequest(path);
 
             request.AddParameter("page", page.ToString());
-
             request.AddParameter("count", pageSize.ToString());
 
-            var response = api.Request(request);
+            var result = api.GetResults<FollowersData>(request);
 
-            var result = GetResponse<FollowersData>(response.ContentStream);
+            result.PageNumber = page;
+            result.PageSize = pageSize;
 
-            EnsureResponseOk(result);
-
-            result.Data.PageNumber = page;
-            result.Data.PageSize = pageSize;
-
-            return result.Data;
+            return result;
         }
 
         public FollowingData GetFollowing()
@@ -247,28 +186,12 @@ namespace GeeklistSharp.Service
             var request = api.CreateAuthenticatedRequest(path);
 
             request.AddParameter("page", page.ToString());
-
             request.AddParameter("count", pageSize.ToString());
 
-            var response = api.Request(request);
+            var result = api.GetResults<FollowingData>(request);
 
-            var result = GetResponse<FollowingData>(response.ContentStream);
-
-            EnsureResponseOk(result);
-
-            result.Data.PageNumber = page;
-            result.Data.PageSize = pageSize;
-
-            return result.Data;
-        }
-
-        protected virtual Response<T> GetResponse<T>(Stream jsonStream)
-        {
-            var streamReader = new StreamReader(jsonStream);
-
-            var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader);
-
-            var result = serializer.Deserialize<Response<T>>(jsonTextReader);
+            result.PageNumber = page;
+            result.PageSize = pageSize;
 
             return result;
         }
@@ -280,36 +203,18 @@ namespace GeeklistSharp.Service
             request.AddParameter("user", userId);
             request.AddParameter("action", "follow");
 
-            var response = api.Request(request);
-
-            var result = GetResponse<object>(response.ContentStream);
-
-            EnsureResponseOk(result);
+            var response = api.GetResults<object>(request);
 
         }
 
         public void UnFollowUser(string userId)
         {
             var request = api.CreateAuthenticatedRequest("/follow", WebMethod.Post);
-
             request.AddParameter("user", userId);
-
-            var response = api.Request(request);
-
-            var result = GetResponse<object>(response.ContentStream);
-
-            EnsureResponseOk(result);
+            var response = api.GetResults<object>(request);
 
         }
         #endregion followers
-
-        private static void EnsureResponseOk<T>(Response<T> result)
-        {
-            if (result.Status != "ok")
-            {
-                throw new GeekListException(result.Status, result.Error);
-            }
-        }
 
         #region Activity
         public object GetCurrentUsersActivities()
@@ -330,15 +235,7 @@ namespace GeeklistSharp.Service
                 request.AddParameter("count", count.Value.ToString());
             }
 
-            var response = api.Request(request);
-
-            var result = GetResponse<Card[]>(response.ContentStream);
-
-            if (result.Status != "ok")
-            {
-                throw new GeekListException(result.Status, result.Error);
-            }
-            return result.Data;
+            return api.GetResults<Card[]>(request);
         }
 
         public object GetUsersActivities(string userName)
@@ -359,16 +256,7 @@ namespace GeeklistSharp.Service
                 request.AddParameter("count", count.Value.ToString());
             }
 
-            var response = api.Request(request);
-
-            var result = GetResponse<List<Activity>>(response.ContentStream);
-
-            if (result.Status != "ok")
-            {
-                throw new GeekListException(result.Status, result.Error);
-            }
-
-            return result.Data;
+            return api.GetResults<List<Activity>>(request);
         }
         public object GetAllActivities()
         {
@@ -388,16 +276,7 @@ namespace GeeklistSharp.Service
                 request.AddParameter("count", count.Value.ToString());
             }
 
-            var response = api.Request(request);
-
-            var result = GetResponse<List<Activity>>(response.ContentStream);
-
-            if (result.Status != "ok")
-            {
-                throw new GeekListException(result.Status, result.Error);
-            }
-
-            return result.Data;
+            return api.GetResults<List<Activity>>(request);
         }
         #endregion
 
@@ -412,16 +291,7 @@ namespace GeeklistSharp.Service
 
             request.AddParameter("type", type);
             request.AddParameter("gfk", id);
-            var response = api.Request(request);
-
-            var result = GetResponse<Card>(response.ContentStream);
-
-            if (result.Status != "ok")
-            {
-                throw new GeekListException(result.Status, result.Error);
-
-            }
-            return result.Data;
+            return api.GetResults<Card>(request);
         }
         #endregion
     }

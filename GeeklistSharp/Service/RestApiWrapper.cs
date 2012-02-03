@@ -5,6 +5,8 @@ using System.Text;
 using Hammock;
 using Hammock.Web;
 using Hammock.Authentication.OAuth;
+using GeeklistSharp.Model;
+using System.IO;
 
 namespace GeeklistSharp.Service
 {
@@ -18,6 +20,16 @@ namespace GeeklistSharp.Service
 
 
         private readonly RestClient _oauth;
+        static readonly Newtonsoft.Json.JsonSerializer serializer;
+
+        static RestApiWrapper()
+        {
+            var settings = new Newtonsoft.Json.JsonSerializerSettings
+            {
+            };
+
+            serializer = Newtonsoft.Json.JsonSerializer.Create(settings);
+        }
 
         public RestApiWrapper(string consumerKey, string consumerSecret, string callback)
         {
@@ -67,6 +79,30 @@ namespace GeeklistSharp.Service
         public RestResponse Request(RestRequest request)
         {
             return _oauth.Request(request);
+        }
+
+        internal T GetResults<T>(RestRequest request)
+        {
+            var response = Request(request);
+            var result = GetResponse<T>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status, result.Error);
+            }
+
+            return result.Data;
+        }
+
+        protected virtual Response<T> GetResponse<T>(Stream jsonStream)
+        {
+            var streamReader = new StreamReader(jsonStream);
+
+            var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader);
+
+            var result = serializer.Deserialize<Response<T>>(jsonTextReader);
+
+            return result;
         }
     }
 }
