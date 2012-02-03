@@ -59,6 +59,7 @@
     <Compile Include="GeeklistServiceActivityTest.cs" />
     <Compile Include="GeeklistServiceCardTest.cs" />
     <Compile Include="GeeklistServiceHighfiveTest.cs" />
+    <Compile Include="GeeklistServiceMicroTest.cs" />
     <Compile Include="GeeklistServiceTest.cs" />
     <Compile Include="GeeklistServiceUserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

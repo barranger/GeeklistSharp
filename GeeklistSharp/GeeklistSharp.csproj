@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -56,9 +57,12 @@
     <Compile Include="Model\GeekListException.cs" />
     <Compile Include="Model\GeeklistItemType.cs" />
     <Compile Include="Model\Gfk.cs" />
+    <Compile Include="Model\Micro.cs" />
+    <Compile Include="Model\MicroData.cs" />
     <Compile Include="Model\OAuthAccessToken.cs" />
     <Compile Include="Model\OAuthRequestToken.cs" />
     <Compile Include="Model\Page.cs" />
+    <Compile Include="Model\Reply.cs" />
     <Compile Include="Model\Response.cs" />
     <Compile Include="Model\ShortCode.cs" />
     <Compile Include="Model\Stats.cs" />
@@ -72,7 +76,6 @@
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

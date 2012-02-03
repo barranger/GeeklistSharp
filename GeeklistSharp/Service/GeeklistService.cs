@@ -298,6 +298,52 @@ namespace GeeklistSharp.Service
 
         #endregion Cards
 
+        #region Micros
+
+        public object GetCurrentUsersMicros()
+        {
+            return GetCurrentUsersMicros(null, null);
+        }
+
+        public object GetCurrentUsersMicros(int? page, int? count)
+        {
+            var request = new RestRequest
+            {
+                Credentials = new OAuthCredentials
+                {
+                    ConsumerKey = _consumerKey,
+                    ConsumerSecret = _consumerSecret,
+                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
+                    Token = _token,
+                    TokenSecret = _tokenSecret,
+                    Type = OAuthType.ProtectedResource
+                },
+                Method = WebMethod.Get,
+                Path = "/user/micros"
+            };
+
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
+
+            var response = _oauth.Request(request);
+
+            var result = GetResponse<MicroData>(response.ContentStream);
+
+            if (result.Status != "ok")
+            {
+                throw new GeekListException(result.Status, result.Error);
+            }
+
+            return result.Data;
+        }
+
+        #endregion Micros
         #region Followers
 
         public FollowersData GetFollowers()
