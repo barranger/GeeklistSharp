@@ -15,14 +15,7 @@ namespace GeeklistSharp.Service
 {
     public class GeeklistService
     {
-        private static string _consumerKey;
-        private static string _consumerSecret;
-        private static string _callback;
-
-        private static string _token;
-        private static string _tokenSecret;
-
-        private readonly RestClient _oauth;
+        private static RestApiWrapper api;
 
         static readonly Newtonsoft.Json.JsonSerializer serializer;
 
@@ -37,36 +30,16 @@ namespace GeeklistSharp.Service
 
         public GeeklistService(string consumerKey, string consumerSecret, string callback = "oob")
         {
-            _consumerKey = consumerKey;
-            _consumerSecret = consumerSecret;
-            _callback = callback;
-
-            _oauth = new RestClient
-            {
-                Authority = Globals.RestAPIAuthority,
-                VersionPath = "v1",
-                UserAgent = "GeeklistSharp",
-            };
+            api = new RestApiWrapper(consumerKey, consumerSecret, callback);
         }
 
+        #region login
         public OAuthRequestToken GetRequestToken()
         {
 
-            var request = new RestRequest
-            {
-                Credentials = new OAuthCredentials
-                {
-                    ConsumerKey = _consumerKey,
-                    ConsumerSecret = _consumerSecret,
-                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
-                    CallbackUrl = _callback,
-                    Type = OAuthType.RequestToken
-                },
-                Method = WebMethod.Get,
-                Path = "/oauth/request_token"
-            };
-
-            var response = _oauth.Request(request);
+            var request = api.CreateAuthenticatedRequest("/oauth/request_token", OAuthType.RequestToken);
+            
+            var response = api.Request(request);
 
             var query = HttpUtility.ParseQueryString(response.Content);
             var oauth = new OAuthRequestToken
@@ -85,23 +58,11 @@ namespace GeeklistSharp.Service
 
         public OAuthAccessToken GetAccessToken(OAuthRequestToken requestToken, string verifyer)
         {
-            var request = new RestRequest
-            {
-                Credentials = new OAuthCredentials
-                {
-                    ConsumerKey = _consumerKey,
-                    ConsumerSecret = _consumerSecret,
-                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
-                    Token = requestToken.Token,
-                    TokenSecret = requestToken.TokenSecret,
-                    Verifier = verifyer,
-                    Type = OAuthType.AccessToken
-                },
-                Method = WebMethod.Get,
-                Path = "/oauth/access_token"
-            };
+            var request = api.CreateAuthenticatedRequest("/oauth/access_token", OAuthType.AccessToken);
+            var cred = request.Credentials as OAuthCredentials;
+            cred.Verifier = verifyer;
 
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var query = HttpUtility.ParseQueryString(response.Content);
             var oauth = new OAuthAccessToken
@@ -115,15 +76,17 @@ namespace GeeklistSharp.Service
 
         public void AuthenticateWith(string token, string tokenSecret)
         {
-            _token = token;
-            _tokenSecret = tokenSecret;
+            api.Token = token;
+            api.TokenSecret = tokenSecret;
         }
+        #endregion login
 
+        #region user
         public User GetUser(string name = null)
         {
-            var request = CreateAuthenticatedRequest(name == null ? "/user" : "/users/" + name);
+            var request = api.CreateAuthenticatedRequest(name == null ? "/user" : "/users/" + name);
 
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var result = GetResponse<User>(response.ContentStream);
 
@@ -134,25 +97,7 @@ namespace GeeklistSharp.Service
 
             return result.Data;
         }
-
-        private static RestRequest CreateAuthenticatedRequest(string path)
-        {
-            var request = new RestRequest
-            {
-                Credentials = new OAuthCredentials
-                {
-                    ConsumerKey = _consumerKey,
-                    ConsumerSecret = _consumerSecret,
-                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
-                    Token = _token,
-                    TokenSecret = _tokenSecret,
-                    Type = OAuthType.ProtectedResource
-                },
-                Method = WebMethod.Get,
-                Path = path
-            };
-            return request;
-        }
+        #endregion user
 
         #region Cards
 
@@ -163,7 +108,7 @@ namespace GeeklistSharp.Service
 
         public object GetCurrentUsersCards(int? page, int? count)
         {
-            var request = CreateAuthenticatedRequest("/user/cards");
+            var request = api.CreateAuthenticatedRequest("/user/cards");
 
             if (page.HasValue)
             {
@@ -174,7 +119,7 @@ namespace GeeklistSharp.Service
                 request.AddParameter("count", count.Value.ToString());
             }
 
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var result = GetResponse<CardData>(response.ContentStream);
 
@@ -193,7 +138,7 @@ namespace GeeklistSharp.Service
 
         public object GetUsersCards(string userName, int? page, int? count)
         {
-            var request = CreateAuthenticatedRequest(string.Format("/users/{0}/cards", userName));
+            var request = api.CreateAuthenticatedRequest(string.Format("/users/{0}/cards", userName));
 
             if (page.HasValue)
             {
@@ -204,7 +149,7 @@ namespace GeeklistSharp.Service
                 request.AddParameter("count", count.Value.ToString());
             }
 
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var result = GetResponse<CardData>(response.ContentStream);
 
@@ -218,9 +163,9 @@ namespace GeeklistSharp.Service
 
         public object GetCard(string id)
         {
-            var request = CreateAuthenticatedRequest(string.Format("/cards/{0}", id));
+            var request = api.CreateAuthenticatedRequest(string.Format("/cards/{0}", id));
 
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var result = GetResponse<Card>(response.ContentStream);
 
@@ -234,23 +179,10 @@ namespace GeeklistSharp.Service
 
         public object CreateCard(string headline)
         {
-            var request = new RestRequest
-            {
-                Credentials = new OAuthCredentials
-                {
-                    ConsumerKey = _consumerKey,
-                    ConsumerSecret = _consumerSecret,
-                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
-                    Token = _token,
-                    TokenSecret = _tokenSecret,
-                    Type = OAuthType.ProtectedResource
-                },
-                Method = WebMethod.Post,
-                Path = "/cards"
-            };
+            var request = api.CreateAuthenticatedRequest("/cards", WebMethod.Post);
 
             request.AddParameter("headline", headline);
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var result = GetResponse<Card>(response.ContentStream);
 
@@ -280,13 +212,13 @@ namespace GeeklistSharp.Service
         {
             var path = string.IsNullOrEmpty(user) ? "/user/followers" : string.Format("/users/{0}/followers", user);
 
-            var request = CreateAuthenticatedRequest(path);
+            var request = api.CreateAuthenticatedRequest(path);
 
             request.AddParameter("page", page.ToString());
 
             request.AddParameter("count", pageSize.ToString());
 
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var result = GetResponse<FollowersData>(response.ContentStream);
 
@@ -312,13 +244,13 @@ namespace GeeklistSharp.Service
         {
             var path = string.IsNullOrEmpty(user) ? "/user/following" : string.Format("/users/{0}/following", user);
 
-            var request = CreateAuthenticatedRequest(path);
+            var request = api.CreateAuthenticatedRequest(path);
 
             request.AddParameter("page", page.ToString());
 
             request.AddParameter("count", pageSize.ToString());
 
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var result = GetResponse<FollowingData>(response.ContentStream);
 
@@ -343,12 +275,12 @@ namespace GeeklistSharp.Service
 
         public void FollowUser(string userId)
         {
-            var request = PostRequest("/follow");
+            var request = api.CreateAuthenticatedRequest("/follow", WebMethod.Post);
 
             request.AddParameter("user", userId);
             request.AddParameter("action", "follow");
 
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var result = GetResponse<object>(response.ContentStream);
 
@@ -358,11 +290,11 @@ namespace GeeklistSharp.Service
 
         public void UnFollowUser(string userId)
         {
-            var request = PostRequest("/follow");
+            var request = api.CreateAuthenticatedRequest("/follow", WebMethod.Post);
 
             request.AddParameter("user", userId);
 
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var result = GetResponse<object>(response.ContentStream);
 
@@ -370,32 +302,13 @@ namespace GeeklistSharp.Service
 
         }
         #endregion followers
+
         private static void EnsureResponseOk<T>(Response<T> result)
         {
             if (result.Status != "ok")
             {
                 throw new GeekListException(result.Status, result.Error);
             }
-        }
-
-        private static RestRequest PostRequest(string path)
-        {
-            var request = new RestRequest
-            {
-                Credentials = new OAuthCredentials
-                {
-                    ConsumerKey = _consumerKey,
-                    ConsumerSecret = _consumerSecret,
-                    SignatureMethod = OAuthSignatureMethod.HmacSha1,
-                    Token = _token,
-                    TokenSecret = _tokenSecret,
-                    Type = OAuthType.ProtectedResource
-                },
-                Method = WebMethod.Post,
-                Path = path
-            };
-
-            return request;
         }
 
         #region Activity
@@ -406,7 +319,7 @@ namespace GeeklistSharp.Service
 
         public object GetCurrentUsersActivities(int? page, int? count)
         {
-            var request = CreateAuthenticatedRequest("/user/activity");
+            var request = api.CreateAuthenticatedRequest("/user/activity");
 
             if (page.HasValue)
             {
@@ -417,7 +330,7 @@ namespace GeeklistSharp.Service
                 request.AddParameter("count", count.Value.ToString());
             }
 
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var result = GetResponse<Card[]>(response.ContentStream);
 
@@ -435,7 +348,7 @@ namespace GeeklistSharp.Service
 
         public object GetUsersActivities(string userName, int? page, int? count)
         {
-            var request = CreateAuthenticatedRequest(string.Format("/users/{0}/activity", userName));
+            var request = api.CreateAuthenticatedRequest(string.Format("/users/{0}/activity", userName));
 
             if (page.HasValue)
             {
@@ -446,7 +359,7 @@ namespace GeeklistSharp.Service
                 request.AddParameter("count", count.Value.ToString());
             }
 
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var result = GetResponse<List<Activity>>(response.ContentStream);
 
@@ -464,7 +377,7 @@ namespace GeeklistSharp.Service
 
         public object GetAllActivities(int? page, int? count)
         {
-            var request = CreateAuthenticatedRequest("/activity");
+            var request = api.CreateAuthenticatedRequest("/activity");
 
             if (page.HasValue)
             {
@@ -475,7 +388,7 @@ namespace GeeklistSharp.Service
                 request.AddParameter("count", count.Value.ToString());
             }
 
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var result = GetResponse<List<Activity>>(response.ContentStream);
 
@@ -495,13 +408,11 @@ namespace GeeklistSharp.Service
             {
                 throw new ArgumentException("Invalid id", "id");
             }
-            var request = PostRequest("/highfive");
-
-            
+            var request = api.CreateAuthenticatedRequest("/highfive", WebMethod.Post);
 
             request.AddParameter("type", type);
             request.AddParameter("gfk", id);
-            var response = _oauth.Request(request);
+            var response = api.Request(request);
 
             var result = GetResponse<Card>(response.ContentStream);
 
