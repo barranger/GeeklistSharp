@@ -24,6 +24,17 @@ namespace GeeklistSharp.Service
 
         private readonly RestClient _oauth;
 
+        static readonly Newtonsoft.Json.JsonSerializer serializer;
+
+        static GeeklistService()
+        {
+            var settings = new Newtonsoft.Json.JsonSerializerSettings
+            {
+            };
+
+            serializer = Newtonsoft.Json.JsonSerializer.Create(settings);
+        }
+
         public GeeklistService(string consumerKey, string consumerSecret, string callback = "oob")
         {
             _consumerKey = consumerKey;
@@ -31,11 +42,11 @@ namespace GeeklistSharp.Service
             _callback = callback;
 
             _oauth = new RestClient
-                        {
-                            Authority = Globals.RestAPIAuthority,
-                            VersionPath = "v1",
-                            UserAgent = "GeeklistSharp",
-                        };
+            {
+                Authority = Globals.RestAPIAuthority,
+                VersionPath = "v1",
+                UserAgent = "GeeklistSharp",
+            };
         }
 
         public OAuthRequestToken GetRequestToken()
@@ -137,15 +148,15 @@ namespace GeeklistSharp.Service
 
             return result.Data;
         }
-		
-#region Cards
+
+        #region Cards
 
         public object GetCurrentUsersCards()
         {
-            return GetCurrentUsersCards(null,null);
+            return GetCurrentUsersCards(null, null);
         }
 
-        public object GetCurrentUsersCards(int? page,int? count)
+        public object GetCurrentUsersCards(int? page, int? count)
         {
             var request = new RestRequest
             {
@@ -164,7 +175,7 @@ namespace GeeklistSharp.Service
 
             if (page.HasValue)
             {
-                request.AddParameter("page",page.Value.ToString());
+                request.AddParameter("page", page.Value.ToString());
             }
             if (count.HasValue)
             {
@@ -285,9 +296,9 @@ namespace GeeklistSharp.Service
             return result.Data;
         }
 
-#endregion Cards
+        #endregion Cards
 
-#region Followers
+        #region Followers
 
         public FollowersData GetFollowers()
         {
@@ -340,9 +351,9 @@ namespace GeeklistSharp.Service
             request.AddParameter("page", page.ToString());
 
             request.AddParameter("count", pageSize.ToString());
-            
+
             var response = _oauth.Request(request);
-            
+
             var result = GetResponse<FollowingData>(response.ContentStream);
 
             EnsureResponseOk(result);
@@ -351,17 +362,18 @@ namespace GeeklistSharp.Service
             result.Data.PageSize = pageSize;
 
             return result.Data;
-		}
-        
+        }
+
         protected virtual Response<T> GetResponse<T>(Stream jsonStream)
-			where T : new()
-		{
-			var serializer = new DataContractJsonSerializer(typeof(Response<T>));
+        {
+            var streamReader = new StreamReader(jsonStream);
 
-			var result = (Response<T>)serializer.ReadObject(jsonStream);
+            var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader);
 
-			return result;
-		}
+            var result = serializer.Deserialize<Response<T>>(jsonTextReader);
+
+            return result;
+        }
 
         public void FollowUser(string userId)
         {
@@ -375,7 +387,7 @@ namespace GeeklistSharp.Service
             var result = GetResponse<object>(response.ContentStream);
 
             EnsureResponseOk(result);
-            
+
         }
 
         public void UnFollowUser(string userId)
@@ -383,7 +395,7 @@ namespace GeeklistSharp.Service
             var request = PostRequest("/follow");
 
             request.AddParameter("user", userId);
-            
+
             var response = _oauth.Request(request);
 
             var result = GetResponse<object>(response.ContentStream);
@@ -391,7 +403,7 @@ namespace GeeklistSharp.Service
             EnsureResponseOk(result);
 
         }
-#endregion followers
+        #endregion followers
         private static void EnsureResponseOk<T>(Response<T> result)
         {
             if (result.Status != "ok")
@@ -422,7 +434,7 @@ namespace GeeklistSharp.Service
 
         private static RestRequest GetRequest(string path)
         {
-			var request = new RestRequest
+            var request = new RestRequest
             {
                 Credentials = new OAuthCredentials
                 {
@@ -438,8 +450,8 @@ namespace GeeklistSharp.Service
             };
 
             return request;
-		}
-        
+        }
+
         #region Activity
         public object GetCurrentUsersActivities()
         {
@@ -474,7 +486,7 @@ namespace GeeklistSharp.Service
 
             var response = _oauth.Request(request);
 
-            var result = GetResponse<CardData>(response.ContentStream);
+            var result = GetResponse<Card[]>(response.ContentStream);
 
             if (result.Status != "ok")
             {
@@ -524,15 +536,15 @@ namespace GeeklistSharp.Service
             }
 
             return result.Data;
-        }       
+        }
         public object GetAllActivities()
         {
             return GetAllActivities(null, null);
         }
 
         public object GetAllActivities(int? page, int? count)
-		{
-		    var request = GetRequest("/activity");
+        {
+            var request = GetRequest("/activity");
 
             if (page.HasValue)
             {
@@ -557,26 +569,17 @@ namespace GeeklistSharp.Service
         #endregion
 
         #region HighFive
-        public object HighfiveItem(string id, GeeklistItemType type)
+        public object HighfiveItem(string id, string type)
         {
             if (string.IsNullOrEmpty(id))
             {
-                throw new ArgumentException("Invalid id","id");
+                throw new ArgumentException("Invalid id", "id");
             }
-		    var request = PostRequest("/highfive");
-              
-            string typeParameter;
-            switch(type){
-                case GeeklistItemType.Micro:
-                    typeParameter="micro";
-                    break;
-                case GeeklistItemType.Card:
-                default:
-                    typeParameter="card";
-                    break;
-            }
+            var request = PostRequest("/highfive");
 
-            request.AddParameter("type", typeParameter);
+            
+
+            request.AddParameter("type", type);
             request.AddParameter("gfk", id);
             var response = _oauth.Request(request);
 
@@ -589,6 +592,6 @@ namespace GeeklistSharp.Service
             }
             return result.Data;
         }
-#endregion
+        #endregion
     }
 }
