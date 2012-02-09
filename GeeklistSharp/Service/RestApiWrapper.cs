@@ -81,7 +81,20 @@ namespace GeeklistSharp.Service
             return _oauth.Request(request);
         }
 
-        internal T GetResults<T>(RestRequest request)
+
+        public void GetResultsAsync<T>(RestRequest request, Action<T> callback)
+        {
+            var restCallback = new RestCallback(
+                (req, resp, obj) =>
+                    {
+                        callback(GetResults<T>(req));
+                    }
+                );
+            _oauth.BeginRequest(request, restCallback);
+
+        }
+
+        public T GetResults<T>(RestRequest request)
         {
             var response = Request(request);
             var result = GetResponse<T>(response.ContentStream);

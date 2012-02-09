@@ -77,6 +77,12 @@ namespace GeeklistSharp.Service
 
             return api.GetResults<User>(request);
         }
+
+        public void GetUserAsync( Action<User> callback, string name = null)
+        {
+            var request = api.CreateAuthenticatedRequest(name == null ? "/user" : "/users/" + name);
+            api.GetResultsAsync<User>(request, callback);
+        }
         #endregion user
 
         #region Cards
@@ -164,6 +170,7 @@ namespace GeeklistSharp.Service
         }
 
         #endregion Micros
+
         #region Followers
 
         public FollowersData GetFollowers()

@@ -8,6 +8,7 @@ using System.Diagnostics;
 using GeeklistSharp.Model;
 using System.IO;
 using System.Runtime.Serialization.Json;
+using System.Threading;
 
 namespace GeeklistSharp.Tests
 {
@@ -42,6 +43,29 @@ namespace GeeklistSharp.Tests
             Assert.AreEqual(user.Name, "Barranger Ridler");
             //Assert.IsNotNull(user.Stats);
             //Assert.AreNotEqual(user.Stats.Views, 0);
+        }
+
+        [TestMethod]
+        public void AsyncUserByNameInfoTest()
+        {
+            User user = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false); 
+
+            service.GetUserAsync( (u) => 
+                {
+                    user = u;
+                    waitHandle.Set();
+                }, "4mkmobile");
+            
+            if (!waitHandle.WaitOne(5000, false))  
+            {  
+                Assert.Fail("Test timed out.");  
+            }
+
+            Assert.IsNotNull(user);
+            Assert.AreEqual(user.ScreenName, "4MKMobile");
+            Assert.AreEqual(user.Name, "Barranger Ridler");
+
         }
 
         //private GeeklistService GetAndTestAuthenticatedService()
