@@ -140,6 +140,30 @@ namespace GeeklistSharp.Service
 
         #endregion Cards
 
+        #region Micros
+
+        public object GetCurrentUsersMicros()
+        {
+            return GetCurrentUsersMicros(null, null);
+        }
+
+        public object GetCurrentUsersMicros(int? page, int? count)
+        {
+            var request = api.CreateAuthenticatedRequest("/user/micros");
+
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
+
+            return api.GetResults<MicroData>(request);
+        }
+
+        #endregion Micros
         #region Followers
 
         public FollowersData GetFollowers()

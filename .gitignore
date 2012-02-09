@@ -35,3 +35,4 @@ publish.xml
 TestResults
 *.user
 *.suo
+testimpactdata.sdf

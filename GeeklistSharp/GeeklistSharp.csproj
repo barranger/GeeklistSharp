@@ -56,9 +56,12 @@
     <Compile Include="Model\GeekListException.cs" />
     <Compile Include="Model\GeeklistItemType.cs" />
     <Compile Include="Model\Gfk.cs" />
+    <Compile Include="Model\Micro.cs" />
+    <Compile Include="Model\MicroData.cs" />
     <Compile Include="Model\OAuthAccessToken.cs" />
     <Compile Include="Model\OAuthRequestToken.cs" />
     <Compile Include="Model\Page.cs" />
+    <Compile Include="Model\Reply.cs" />
     <Compile Include="Model\Response.cs" />
     <Compile Include="Model\ShortCode.cs" />
     <Compile Include="Model\Stats.cs" />
