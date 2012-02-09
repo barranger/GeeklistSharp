@@ -49,7 +49,7 @@ namespace GeeklistSharp.Service
         {
             var request = api.CreateAuthenticatedRequest("/oauth/access_token", OAuthType.AccessToken);
             var cred = request.Credentials as OAuthCredentials;
-            cred.Verifier = verifyer;
+            if (cred != null){cred.Verifier = verifyer;}
 
             var response = api.Request(request);
 
