@@ -84,7 +84,7 @@ namespace GeeklistSharp.Tests
         }
 
         /// <summary>
-        ///A test for ServiceCards to create a new card
+        ///A test for ServiceCards to create a new Card
         ///</summary>
         [TestMethod]
         public void ServiceCreateCardTest()

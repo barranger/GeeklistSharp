@@ -169,6 +169,31 @@ namespace GeeklistSharp.Service
             return api.GetResults<MicroData>(request);
         }
 
+        public object GetMicro(string id)
+        {
+            var request = api.CreateAuthenticatedRequest(string.Format("/micros/{0}", id));
+
+            return api.GetResults<Micro>(request);
+        }
+
+        public object CreateMicro(string status)
+        {
+            return CreateMicro(string.Empty, string.Empty, status);
+        }
+
+        public object CreateMicro(string type, string in_reply_to, string status)
+        {
+            var request = api.CreateAuthenticatedRequest("/micros", WebMethod.Post);
+
+            if (!string.IsNullOrEmpty(type) || !string.IsNullOrEmpty(in_reply_to))
+            {
+                request.AddParameter("type", type);
+                request.AddParameter("in_reply_to", in_reply_to);
+            }
+            request.AddParameter("status", status);
+            return api.GetResults<Micro>(request);
+        }
+
         #endregion Micros
 
         #region Followers
