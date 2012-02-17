@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using GeeklistSharp.Service;
 using System.Diagnostics;
@@ -41,6 +42,30 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceCards to get the Cards of the current User
         ///</summary>
         [TestMethod]
+        public void ServiceGetCurrentUsersCardsAsyncTest()
+        {
+            CardData currentUsersCards = null;
+
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetCurrentUsersCardsAsync((cuc) =>
+            {
+                currentUsersCards = cuc;
+                waitHandle.Set();
+            });
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
+
+            Assert.IsNotNull(currentUsersCards);
+        }
+
+        /// <summary>
+        ///A test for ServiceCards to get the Cards of the current User
+        ///</summary>
+        [TestMethod]
         public void ServiceGetCurrentUsersCardsPagedTest()
         {
             var currentUsersCards = service.GetCurrentUsersCards(1,null);
@@ -52,10 +77,55 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceCards to get the Cards of the current User
         ///</summary>
         [TestMethod]
+        public void ServiceGetCurrentUsersCardsPagedAsyncTest()
+        {
+            CardData currentUsersCards = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetCurrentUsersCardsAsync((cuc) =>
+            {
+                currentUsersCards = cuc;
+                waitHandle.Set();
+            }, 1, null);
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
+
+            Assert.IsNotNull(currentUsersCards);
+        }
+
+        /// <summary>
+        ///A test for ServiceCards to get the Cards of the current User
+        ///</summary>
+        [TestMethod]
         public void ServiceGetCurrentUsersCardsCountTest()
         {
-         
             var currentUsersCards = service.GetCurrentUsersCards(null, 5);
+
+            Assert.IsNotNull(currentUsersCards);
+        }
+
+        /// <summary>
+        ///A test for ServiceCards to get the Cards of the current User
+        ///</summary>
+        [TestMethod]
+        public void ServiceGetCurrentUsersCardsCountAsyncTest()
+        {
+            CardData currentUsersCards = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetCurrentUsersCardsAsync((cuc) =>
+            {
+                currentUsersCards = cuc;
+                waitHandle.Set();
+            }, null, 5);
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
 
             Assert.IsNotNull(currentUsersCards);
         }
@@ -66,11 +136,45 @@ namespace GeeklistSharp.Tests
         [TestMethod]
         public void ServiceGetCurrentUsersCardsPagedCountTest()
         {
-         
             var currentUsersCards = service.GetCurrentUsersCards(2, 5);
 
             Assert.IsNotNull(currentUsersCards);
         }
+
+        /// <summary>
+        ///A test for ServiceCards to get the Cards of the current User
+        ///</summary>
+        [TestMethod]
+        public void ServiceGetCurrentUsersCardsPagedCountAsyncTest()
+        {
+            CardData currentUsersCards = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetCurrentUsersCardsAsync((cuc) =>
+            {
+                currentUsersCards = cuc;
+                waitHandle.Set();
+            }, 2, 5);
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
+
+            Assert.IsNotNull(currentUsersCards);
+        }
+
+        /// <summary>
+        ///A test for ServiceCards to get the Cards of the current User
+        ///</summary>
+        [TestMethod]
+        public void ServiceGetUsersCardsTest()
+        {
+            var usersCards = service.GetUsersCards(TestConstants.USERID);
+
+            Assert.IsNotNull(usersCards);
+        }
+
 
         /// <summary>
         ///A test for ServiceCards for a specific Card

@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 using GeeklistSharp.Model;
+using System.Threading;
 
 namespace GeeklistSharp.Tests
 {
@@ -116,6 +117,42 @@ namespace GeeklistSharp.Tests
             var verifyer = "5444526"; // <-- Debugger breakpoint and edit with the actual verifier
 
             OAuthAccessToken accessToken = target.GetAccessToken(requestToken, verifyer);
+            Assert.IsNotNull(accessToken);
+            Assert.IsFalse(accessToken.Token == "?" || accessToken.TokenSecret == "?");
+        }
+
+        /// <summary>
+        ///A test for GetRequestToken
+        ///</summary>
+        [TestMethod()]
+        public void GetAccessTokenAsyncTest()
+        {
+            string consumerKey = TestConstants.OAUTH_CONSUMER_KEY; // TODO: Initialize to an appropriate value
+            string consumerSecret = TestConstants.OAUTH_CONSUMER_SECRET; // TODO: Initialize to an appropriate value
+            GeeklistService target = new GeeklistService(consumerKey, consumerSecret);
+
+            var requestToken = target.GetRequestToken();
+            Assert.IsNotNull(requestToken);
+            Assert.IsFalse(requestToken.Token == "?" || requestToken.TokenSecret == "?");
+
+            var uri = target.GetAuthorizationUrl(requestToken.Token);
+            Process.Start(uri.ToString());
+
+            var verifyer = "5444526"; // <-- Debugger breakpoint and edit with the actual verifier
+
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+            OAuthAccessToken accessToken = null;
+            target.GetAccessTokenAsync((at) => 
+                {
+                    accessToken = at;
+                    waitHandle.Set();
+                },requestToken, verifyer);
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
+
             Assert.IsNotNull(accessToken);
             Assert.IsFalse(accessToken.Token == "?" || accessToken.TokenSecret == "?");
         }
