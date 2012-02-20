@@ -31,7 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hammock">
+    <Reference Include="Hammock, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c148cfba29ed1a4d, processorArchitecture=MSIL">
       <HintPath>..\packages\Hammock.1.2.7\lib\net40\Hammock.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
@@ -68,6 +68,13 @@
     <Compile Include="Model\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\GeeklistService.cs" />
+    <Compile Include="Service\GeeklistServiceActivity.cs" />
+    <Compile Include="Service\GeeklistServiceCard.cs" />
+    <Compile Include="Service\GeeklistServiceFollowers.cs" />
+    <Compile Include="Service\GeeklistServiceHighfive.cs" />
+    <Compile Include="Service\GeeklistServiceLogin.cs" />
+    <Compile Include="Service\GeeklistServiceMicro.cs" />
+    <Compile Include="Service\GeeklistServiceUser.cs" />
     <Compile Include="Service\RestApiWrapper.cs" />
   </ItemGroup>
   <ItemGroup>

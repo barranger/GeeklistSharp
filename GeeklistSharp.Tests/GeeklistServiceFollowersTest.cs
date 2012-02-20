@@ -18,8 +18,9 @@ namespace GeeklistSharp.Tests
     [TestClass()]
     public class GeeklistServiceFollowersTest
     {
+#region Followers Serialization Tests
         [TestMethod]
-        public void ShouldDeSerializeFollowingData()
+        public void DeserializeFollowing()
         {
             string testStatsJson = @"{""status"":""ok"",""data"":{""total_following"":1,""following"":[{ }] } }";
 
@@ -30,7 +31,7 @@ namespace GeeklistSharp.Tests
         }
 
         [TestMethod]
-        public void ShouldDeSerializeFollowerData()
+        public void DeserializeFollower()
         {
             string testStatsJson = @"{""status"":""ok"",""data"":{""total_followers"":1,""followers"":[{ }] } }";
 
@@ -52,5 +53,6 @@ namespace GeeklistSharp.Tests
         //    service.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
         //    return service;
         //}
+#endregion Followers Serialization Tests
     }
 }

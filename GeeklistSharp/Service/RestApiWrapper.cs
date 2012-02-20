@@ -86,7 +86,13 @@ namespace GeeklistSharp.Service
         {
             var restCallback = new RestCallback(
                 (req, resp, obj) => callback(GetResults<T>(req)));
+
             _oauth.BeginRequest(request, restCallback);
+        }
+
+        void _oauth_BeforeRetry(object sender, RetryEventArgs e)
+        {
+            string b = "";
 
         }
 
@@ -106,7 +112,8 @@ namespace GeeklistSharp.Service
         protected virtual Response<T> GetResponse<T>(Stream jsonStream)
         {
             var streamReader = new StreamReader(jsonStream);
-
+            //string text = streamReader.ReadToEnd();
+            //streamReader = new StreamReader(jsonStream);
             var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader);
 
             var result = serializer.Deserialize<Response<T>>(jsonTextReader);

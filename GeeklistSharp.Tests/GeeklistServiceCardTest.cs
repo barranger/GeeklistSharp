@@ -31,7 +31,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceCards to get the Cards of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersCardsTest()
+        public void GetCurrentUsersCardsTest()
         {
             var currentUsersCards = service.GetCurrentUsersCards();
 
@@ -42,7 +42,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceCards to get the Cards of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersCardsAsyncTest()
+        public void GetCurrentUsersCardsAsyncTest()
         {
             CardData currentUsersCards = null;
 
@@ -66,7 +66,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceCards to get the Cards of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersCardsPagedTest()
+        public void GetCurrentUsersCardsPagedTest()
         {
             var currentUsersCards = service.GetCurrentUsersCards(1,null);
 
@@ -77,7 +77,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceCards to get the Cards of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersCardsPagedAsyncTest()
+        public void GetCurrentUsersCardsAsyncPagedTest()
         {
             CardData currentUsersCards = null;
             AutoResetEvent waitHandle = new AutoResetEvent(false);
@@ -100,7 +100,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceCards to get the Cards of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersCardsCountTest()
+        public void GetCurrentUsersCardsCountTest()
         {
             var currentUsersCards = service.GetCurrentUsersCards(null, 5);
 
@@ -111,7 +111,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceCards to get the Cards of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersCardsCountAsyncTest()
+        public void GetCurrentUsersCardsAsyncCountTest()
         {
             CardData currentUsersCards = null;
             AutoResetEvent waitHandle = new AutoResetEvent(false);
@@ -134,7 +134,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceCards to get the Cards of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersCardsPagedCountTest()
+        public void GetCurrentUsersCardsPagedCountTest()
         {
             var currentUsersCards = service.GetCurrentUsersCards(2, 5);
 
@@ -145,7 +145,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceCards to get the Cards of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersCardsPagedCountAsyncTest()
+        public void GetCurrentUsersCardsAsyncPagedCountTest()
         {
             CardData currentUsersCards = null;
             AutoResetEvent waitHandle = new AutoResetEvent(false);
@@ -168,21 +168,66 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceCards to get the Cards of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetUsersCardsTest()
+        public void GetUsersCardsTest()
         {
-            var usersCards = service.GetUsersCards(TestConstants.USERID);
+            CardData usersCards = service.GetUsersCards(TestConstants.USERID);
 
             Assert.IsNotNull(usersCards);
         }
 
+        /// <summary>
+        ///A test for ServiceCards to get the Cards of the current User
+        ///</summary>
+        [TestMethod]
+        public void GetUsersCardsAsyncTest()
+        {
+            CardData usersCards = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetUsersCardsAsync((uc) =>
+            {
+                usersCards = uc;
+                waitHandle.Set();
+            }, TestConstants.USERID);
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
+            
+            Assert.IsNotNull(usersCards);
+        }
 
         /// <summary>
         ///A test for ServiceCards for a specific Card
         ///</summary>
         [TestMethod]
-        public void ServiceGetSpecificCardTest()
+        public void GetCardTest()
         {
-            var card = service.GetCard(TestConstants.CARDID);
+            Card card = service.GetCard(TestConstants.CARDID);
+
+            Assert.IsNotNull(card);
+        }
+
+        /// <summary>
+        ///A test for ServiceCards for a specific Card
+        ///</summary>
+        [TestMethod]
+        public void GetCardTestAsync()
+        {
+            Card card = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetCardAsync((c) =>
+            {
+                card = c;
+                waitHandle.Set();
+            },TestConstants.CARDID);
+
+            if (!waitHandle.WaitOne(15000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
 
             Assert.IsNotNull(card);
         }
@@ -191,10 +236,33 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceCards to create a new Card
         ///</summary>
         [TestMethod]
-        public void ServiceCreateCardTest()
+        public void CreateCardTest()
         {
+            Card card = service.CreateCard("Unit Test Card" + Guid.NewGuid());
 
-            var card = service.CreateCard("Unit Test Card" + Guid.NewGuid()) as Card;
+            Assert.IsNotNull(card);
+        }
+
+        /// <summary>
+        ///A test for ServiceCards to create a new Card
+        ///</summary>
+        [TestMethod]
+        public void CreateCardTestAsync()
+        {
+            Card card = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+            
+            service.CreateCardAsync((c) =>
+            {
+                card = c;
+                waitHandle.Set();
+            },
+            string.Format("{0} Unit Test Card", DateTime.Now.Ticks));
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
 
             Assert.IsNotNull(card);
         }
@@ -207,12 +275,25 @@ namespace GeeklistSharp.Tests
         public void CardsDeserializeTest()
         {
             string testCardsJson = @"{""status"":""ok"",""data"":{""total_cards"":2,""cards"":[{""updated_at"":""2012-01-27T03:01:11.827Z"",""permalink"":""/lsmithmier/test-2-for-c-api-wrapper"",""slug"":""test-2-for-c-api-wrapper"",""author_id"":""e47163371a660b6eca2b7935ec31f058648175377b290fb039229b3a08971890"",""headline"":""Test 2 for C# API Wrapper"",""trending_hist"":[],""trending_at"":""2012-01-27T03:01:11.747Z"",""created_at"":""2012-01-27T03:01:11.747Z"",""is_trending"":false,""is_active"":true,""skills"":[],""tasks"":[],""stats"":{""highfives"":0,""views"":0},""short_code"":{""id"":""146a1bcbe95def14a19a5441cbccb17ffd582bc0b674755f2a5aedfdb7843068"",""gklst_url"":""http://gkl.st/Xcxn4""},""id"":""146a1bcbe95def14a19a5441cbccb17f5b7b06b25b99396ac906872e584b268a""},{""author_id"":""e47163371a660b6eca2b7935ec31f058648175377b290fb039229b3a08971890"",""created_at"":""2012-01-27T03:00:46.413Z"",""headline"":""Test for C# API Wrapper"",""is_active"":true,""is_trending"":false,""permalink"":""/lsmithmier/test-for-c-api-wrapper"",""skills"":[""C#"",""Visual Studio""],""slug"":""test-for-c-api-wrapper"",""tasks"":[""did some test data entry"",""tested the code"",""built some more code""],""trending_at"":""2012-01-27T03:00:46.413Z"",""trending_hist"":[],""updated_at"":""2012-01-27T03:49:43.128Z"",""stats"":{""highfives"":0,""views"":0},""short_code"":{""id"":""a55109fad7c9b6a330099bf9d48e13ecfcc688b8dce7a67cf61f56155b66ab71"",""gklst_url"":""http://gkl.st/J1h-i""},""id"":""a55109fad7c9b6a330099bf9d48e13ece0cedf364a511b3b1a06e749a2ab8e1f""}]}}";
-
             var result = TestConstants.DeserializeFromStream<Response<CardData>>(testCardsJson);
 
             Assert.IsNotNull(result);
             Assert.AreEqual(result.Status, "ok");
             Assert.AreEqual(result.Data.TotalCards, 2);
+        }
+
+        /// <summary>
+        ///A test for deserializing Cards
+        ///</summary>
+        [TestMethod]
+        public void CardResponseDeserializeTest()
+        {
+            string testCardJson = @"{""status"":""ok"",""data"":{""updated_at"":""2012-01-27T03:01:11.827Z"",""permalink"":""/lsmithmier/test-2-for-c-api-wrapper"",""slug"":""test-2-for-c-api-wrapper"",""author_id"":""e47163371a660b6eca2b7935ec31f058648175377b290fb039229b3a08971890"",""headline"":""Test 2 for C# API Wrapper"",""trending_hist"":[],""trending_at"":""2012-01-27T03:01:11.747Z"",""created_at"":""2012-01-27T03:01:11.747Z"",""is_trending"":false,""is_active"":true,""skills"":[],""tasks"":[],""stats"":{""highfives"":1,""views"":0},""short_code"":{""id"":""146a1bcbe95def14a19a5441cbccb17ffd582bc0b674755f2a5aedfdb7843068"",""gklst_url"":""http://gkl.st/Xcxn4""},""id"":""146a1bcbe95def14a19a5441cbccb17f5b7b06b25b99396ac906872e584b268a"",""contributors"":[],""has_highfived"":false,""is_author"":false}}";
+            var result = TestConstants.DeserializeFromStream<Response<Card>>(testCardJson);
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.Status, "ok");
+            Assert.AreEqual(result.Data.IsActive, true);
         }
 
         /// <summary>

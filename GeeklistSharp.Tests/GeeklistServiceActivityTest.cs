@@ -29,7 +29,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities to get the Activities of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersActivitiesTest()
+        public void GetCurrentUsersActivitiesTest()
         {
             var returnStatus = service.GetCurrentUsersActivities();
 
@@ -40,7 +40,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities to get the Activities of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersActivitiesPagedTest()
+        public void GetCurrentUsersActivitiesPagedTest()
         {
             var currentUsersActivities = service.GetCurrentUsersActivities(1, null);
 
@@ -51,7 +51,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities to get the Activities of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersActivitiesCountTest()
+        public void GetCurrentUsersActivitiesCountTest()
         {
             var currentUsersActivities = service.GetCurrentUsersActivities(null, 5);
 
@@ -62,7 +62,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities to get the Activities of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersActivitiesPagedCountTest()
+        public void GetCurrentUsersActivitiesPagedCountTest()
         {
             var currentUsersActivities = service.GetCurrentUsersActivities(2, 5);
 
@@ -73,7 +73,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities for a specific User
         ///</summary>
         [TestMethod]
-        public void ServiceGetUsersActivitiesTest()
+        public void GetUsersActivitiesTest()
         {
             var usersActivities = service.GetUsersActivities("oakcool");
 
@@ -84,7 +84,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities for a specific User
         ///</summary>
         [TestMethod]
-        public void ServiceGetUsersActivitiesPagedTest()
+        public void GetUsersActivitiesPagedTest()
         {
             var usersActivities = service.GetUsersActivities("oakcool", 1, null);
 
@@ -95,7 +95,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities for a specific User
         ///</summary>
         [TestMethod]
-        public void ServiceGetUsersActivitiesCountTest()
+        public void GetUsersActivitiesCountTest()
         {
             var usersActivities = service.GetUsersActivities("oakcool", null, 5);
 
@@ -106,7 +106,7 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities for a specific User
         ///</summary>
         [TestMethod]
-        public void ServiceGetUsersActivitiesPagedCountTest()
+        public void GetUsersActivitiesPagedCountTest()
         {
             var usersActivities = service.GetUsersActivities("oakcool", 2, 5);
 

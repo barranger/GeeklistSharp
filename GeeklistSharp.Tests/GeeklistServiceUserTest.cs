@@ -24,7 +24,7 @@ namespace GeeklistSharp.Tests
         }
 
         [TestMethod]
-        public void CurrentUserInfoTest()
+        public void GetUserTest()
         {
             var currentUser = service.GetUser();
 
@@ -34,7 +34,7 @@ namespace GeeklistSharp.Tests
         }
 
         [TestMethod]
-        public void AsyncCurrentUserInfoTest()
+        public void GetUserAsyncTest()
         {
             User currentUser =null;
             AutoResetEvent waitHandle = new AutoResetEvent(false);
@@ -55,7 +55,7 @@ namespace GeeklistSharp.Tests
         }
 
         [TestMethod]
-        public void UserByNameInfoTest()
+        public void GetUserNameTest()
         {
             var user = service.GetUser(TestConstants.USERID);
 
@@ -67,7 +67,7 @@ namespace GeeklistSharp.Tests
         }
 
         [TestMethod]
-        public void AsyncUserByNameInfoTest()
+        public void GetUserAsyncNameTest()
         {
             User user = null;
             AutoResetEvent waitHandle = new AutoResetEvent(false); 

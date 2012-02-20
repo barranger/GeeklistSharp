@@ -1,9 +1,12 @@
-﻿using GeeklistSharp.Service;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Diagnostics;
-using GeeklistSharp.Model;
 using System.Threading;
+using GeeklistSharp.Model;
+using GeeklistSharp.Service;
+using Hammock;
+using Hammock.Authentication.OAuth;
+using Hammock.Web;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace GeeklistSharp.Tests
 {
@@ -81,6 +84,33 @@ namespace GeeklistSharp.Tests
             Assert.IsNotNull(token);
             Assert.IsFalse( token.Token == "?" || token.TokenSecret == "?" );
         }
+
+        ///// <summary>
+        /////A test for GetRequestToken
+        /////</summary>
+        //[TestMethod()]
+        //public void GetRequestTokenAsyncTest()
+        //{
+        //    string consumerKey = TestConstants.OAUTH_CONSUMER_KEY; // TODO: Initialize to an appropriate value
+        //    string consumerSecret = TestConstants.OAUTH_CONSUMER_SECRET; // TODO: Initialize to an appropriate value
+        //    GeeklistService target = new GeeklistService(consumerKey, consumerSecret, "http://geekli.st");
+
+        //    AutoResetEvent waitHandle = new AutoResetEvent(false);
+        //    Hammock.RestResponse requestResponse = null;
+        //    target.GetRequestTokenAsync((rr) =>
+        //    {
+        //        requestResponse = rr;
+        //        waitHandle.Set();
+        //    });
+
+        //    if (!waitHandle.WaitOne(10000, false))
+        //    {
+        //        Assert.Fail("Test timed out.");
+        //    }
+        //    var requestToken = GeeklistService.CreateOAuthRequestTokenFromResponse(requestResponse);
+        //    Assert.IsNotNull(requestToken);
+        //    Assert.IsFalse(requestToken.Token == "?" || requestToken.TokenSecret == "?");
+        //}
 
         /// <summary>
         ///A test for GetRequestToken
