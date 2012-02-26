@@ -21,5 +21,18 @@ namespace GeeklistSharp.Service
             request.AddParameter("gfk", id);
             return api.GetResults<Card>(request);
         }
+
+        public void HighfiveItemAsync(Action<object> callback, string id, string type)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentException("Invalid id", "id");
+            }
+            var request = api.CreateAuthenticatedRequest("/highfive", WebMethod.Post);
+
+            request.AddParameter("type", type);
+            request.AddParameter("gfk", id);
+            api.GetResultsAsync<Card>(callback, request);
+        }
     }
 }

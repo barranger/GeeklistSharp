@@ -33,9 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hammock, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c148cfba29ed1a4d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Hammock.1.2.7\lib\net40\Hammock.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json, Version=4.0.7.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -69,6 +66,10 @@
     <Compile Include="TestConstants.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\hammock\src\net40\Hammock\Hammock.csproj">
+      <Project>{CD569558-9092-466B-8670-EA1B151150E0}</Project>
+      <Name>Hammock</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GeeklistSharp\GeeklistSharp.csproj">
       <Project>{E4EF5C4E-708C-4934-B3C1-9D7CCF501D62}</Project>
       <Name>GeeklistSharp</Name>

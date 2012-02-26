@@ -14,26 +14,65 @@ namespace GeeklistSharp.Service
             return GetFollowers(null);
         }
 
-        public FollowersData GetFollowers(string user)
+        public void GetFollowersAsync(Action<FollowersData> callback)
         {
-            return GetFollowers(user, 1, 10);
+            GetFollowersAsync(callback, null);
         }
 
-        public FollowersData GetFollowers(string user, int page, int pageSize)
+        public FollowersData GetFollowers(string user)
+        {
+            return GetFollowers(user, null, null);
+        }
+
+        public void GetFollowersAsync(Action<FollowersData> callback, string user)
+        {
+            GetFollowersAsync(callback, user, null, null);
+        }
+
+        public FollowersData GetFollowers(string user, int? page, int? count)
         {
             var path = string.IsNullOrEmpty(user) ? "/user/followers" : string.Format("/users/{0}/followers", user);
 
             var request = api.CreateAuthenticatedRequest(path);
 
-            request.AddParameter("page", page.ToString());
-            request.AddParameter("count", pageSize.ToString());
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
 
             var result = api.GetResults<FollowersData>(request);
 
-            result.PageNumber = page;
-            result.PageSize = pageSize;
-
+            if (page.HasValue)
+            {
+                result.PageNumber = page.Value;
+            }
+            if (count.HasValue)
+            {
+                result.PageSize = count.Value;
+            }
             return result;
+        }
+
+        public void GetFollowersAsync(Action<FollowersData> callback, string user, int? page, int? count)
+        {
+            var path = string.IsNullOrEmpty(user) ? "/user/followers" : string.Format("/users/{0}/followers", user);
+
+            var request = api.CreateAuthenticatedRequest(path);
+
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
+
+            api.GetResultsAsync<FollowersData>(callback, request);
         }
 
         public FollowingData GetFollowing()
@@ -41,26 +80,66 @@ namespace GeeklistSharp.Service
             return GetFollowing(null);
         }
 
-        public FollowingData GetFollowing(string user)
+        public void GetFollowingAsync(Action<FollowingData> callback)
         {
-            return GetFollowing(user, 1, 10);
+            GetFollowingAsync(callback, null);
         }
 
-        public FollowingData GetFollowing(string user, int page, int pageSize)
+        public FollowingData GetFollowing(string user)
+        {
+            return GetFollowing(user, null, null);
+        }
+
+        public void GetFollowingAsync(Action<FollowingData> callback, string user)
+        {
+            GetFollowingAsync(callback, user, null, null);
+        }
+
+        public FollowingData GetFollowing(string user, int? page, int? count)
         {
             var path = string.IsNullOrEmpty(user) ? "/user/following" : string.Format("/users/{0}/following", user);
 
             var request = api.CreateAuthenticatedRequest(path);
 
-            request.AddParameter("page", page.ToString());
-            request.AddParameter("count", pageSize.ToString());
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
 
             var result = api.GetResults<FollowingData>(request);
 
-            result.PageNumber = page;
-            result.PageSize = pageSize;
+            if (page.HasValue)
+            {
+                result.PageNumber = page.Value;
+            }
+            if (count.HasValue)
+            {
+                result.PageSize = count.Value;
+            }
 
             return result;
+        }
+
+        public void GetFollowingAsync(Action<FollowingData> callback, string user, int? page, int? count)
+        {
+            var path = string.IsNullOrEmpty(user) ? "/user/following" : string.Format("/users/{0}/following", user);
+
+            var request = api.CreateAuthenticatedRequest(path);
+
+            if (page.HasValue)
+            {
+                request.AddParameter("page", page.Value.ToString());
+            }
+            if (count.HasValue)
+            {
+                request.AddParameter("count", count.Value.ToString());
+            }
+
+            api.GetResultsAsync<FollowingData>(callback, request);
         }
 
         public void FollowUser(string userId)
@@ -73,6 +152,16 @@ namespace GeeklistSharp.Service
             var response = api.GetResults<object>(request);
         }
 
+        public void FollowUserAsync(Action<object> callback, string userId)
+        {
+            var request = api.CreateAuthenticatedRequest("/follow", WebMethod.Post);
+
+            request.AddParameter("user", userId);
+            request.AddParameter("action", "follow");
+
+            api.GetResultsAsync<object>(callback, request);
+        }
+
         public void UnFollowUser(string userId)
         {
             var request = api.CreateAuthenticatedRequest("/follow", WebMethod.Post);
@@ -80,5 +169,11 @@ namespace GeeklistSharp.Service
             var response = api.GetResults<object>(request);
         }
 
+        public void UnFollowUserAsync(Action<object> callback, string userId)
+        {
+            var request = api.CreateAuthenticatedRequest("/follow", WebMethod.Post);
+            request.AddParameter("user", userId);
+            api.GetResultsAsync<object>(callback, request);
+        }
     }
 }

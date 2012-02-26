@@ -224,7 +224,7 @@ namespace GeeklistSharp.Tests
                 waitHandle.Set();
             },TestConstants.CARDID);
 
-            if (!waitHandle.WaitOne(15000, false))
+            if (!waitHandle.WaitOne(5000, false))
             {
                 Assert.Fail("Test timed out.");
             }
@@ -259,7 +259,7 @@ namespace GeeklistSharp.Tests
             },
             string.Format("{0} Unit Test Card", DateTime.Now.Ticks));
 
-            if (!waitHandle.WaitOne(5000, false))
+            if (!waitHandle.WaitOne(15000, false))
             {
                 Assert.Fail("Test timed out.");
             }

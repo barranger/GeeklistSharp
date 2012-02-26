@@ -15,5 +15,5 @@ namespace GeeklistSharp.Service
         {
             api = new RestApiWrapper(consumerKey, consumerSecret, callback);
         }
-        }
+    }
 }
