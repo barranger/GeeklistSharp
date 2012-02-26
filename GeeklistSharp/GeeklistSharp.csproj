@@ -31,9 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Hammock">
-      <HintPath>..\packages\Hammock.1.2.7\lib\net40\Hammock.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.0.7\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -68,12 +65,25 @@
     <Compile Include="Model\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\GeeklistService.cs" />
+    <Compile Include="Service\GeeklistServiceActivity.cs" />
+    <Compile Include="Service\GeeklistServiceCard.cs" />
+    <Compile Include="Service\GeeklistServiceFollowers.cs" />
+    <Compile Include="Service\GeeklistServiceHighfive.cs" />
+    <Compile Include="Service\GeeklistServiceLogin.cs" />
+    <Compile Include="Service\GeeklistServiceMicro.cs" />
+    <Compile Include="Service\GeeklistServiceUser.cs" />
     <Compile Include="Service\RestApiWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\hammock\src\net40\Hammock\Hammock.csproj">
+      <Project>{CD569558-9092-466B-8670-EA1B151150E0}</Project>
+      <Name>Hammock</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -49,14 +49,17 @@ namespace GeeklistSharp.Service
         {
             return CreateAuthenticatedRequest(path, WebMethod.Get, OAuthType.ProtectedResource);
         }
+
         public RestRequest CreateAuthenticatedRequest(string path, WebMethod method)
         {
             return CreateAuthenticatedRequest(path, method, OAuthType.ProtectedResource);
         }
+
         public RestRequest CreateAuthenticatedRequest(string path, OAuthType type)
         {
             return CreateAuthenticatedRequest(path, WebMethod.Get, type);
         }
+
         public RestRequest CreateAuthenticatedRequest(string path, WebMethod method, OAuthType type)
         {
             var request = new RestRequest
@@ -81,22 +84,22 @@ namespace GeeklistSharp.Service
             return _oauth.Request(request);
         }
 
-
-        public void GetResultsAsync<T>(RestRequest request, Action<T> callback)
+        public void GetResultsAsync<T>(Action<T> callback, RestRequest request)
         {
             var restCallback = new RestCallback(
-                (req, resp, obj) =>
-                    {
-                        callback(GetResults<T>(req));
-                    }
-                );
+                (req, resp, obj) => callback(GetResults<T>(resp)));
             _oauth.BeginRequest(request, restCallback);
-
         }
 
         public T GetResults<T>(RestRequest request)
         {
             var response = Request(request);
+
+            return GetResults<T>(response);
+        }
+
+        public T GetResults<T>(RestResponse response)
+        {
             var result = GetResponse<T>(response.ContentStream);
 
             if (result.Status != "ok")
@@ -110,7 +113,8 @@ namespace GeeklistSharp.Service
         protected virtual Response<T> GetResponse<T>(Stream jsonStream)
         {
             var streamReader = new StreamReader(jsonStream);
-
+            //string text = streamReader.ReadToEnd();
+            //streamReader = new StreamReader(jsonStream);
             var jsonTextReader = new Newtonsoft.Json.JsonTextReader(streamReader);
 
             var result = serializer.Deserialize<Response<T>>(jsonTextReader);
