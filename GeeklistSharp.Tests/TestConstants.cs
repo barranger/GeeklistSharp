@@ -14,11 +14,10 @@ namespace GeeklistSharp.Tests
         public const string OAUTH_CONSUMER_KEY = "";
         public const string OAUTH_CONSUMER_SECRET = "";
         public const string TOKEN = "";
-        public const string TOKEN_SECRET = ""; 
-        public const string CARDID = "";
-        public const string MICROID = "";
-        public const string USERID = "";
-        public const string USERNAME = "";
+        public const string TOKEN_SECRET = "";
+        public const string CARDID = "146a1bcbe95def14a19a5441cbccb17f5b7b06b25b99396ac906872e584b268a";
+        public const string USERID = "4MKMobile";
+        public const string USERNAME = "Barranger Ridler";
 
         public static readonly Newtonsoft.Json.JsonSerializer serializer = new Newtonsoft.Json.JsonSerializer();
 
