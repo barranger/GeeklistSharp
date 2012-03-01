@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using GeeklistSharp.Model;
 using GeeklistSharp.Service;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,26 +16,56 @@ namespace GeeklistSharp.Tests
     [TestClass()]
     public class GeeklistServiceHighfiveTest : GeeklistBaseTest
     {
-        const string testCardId = "25c31dfce3d67208330a6cb995fc517bc48deda5d63bf6a65b83637cec65f9db";
-        const string testMicroId = "c8a1d5e5d41bbcb6d29f6b63b1e9e6526e78ee25a7a0983ec63ff8a4b2275148";
-
         private GeeklistService service;
+        private Card unitTestCard;
+        private Micro unitTestMicro;
 
         [TestInitialize]
         public void Setup()
         {
             service = GetAuthenticatedService();
+            unitTestCard = service.CreateCard("Unit Test Card " + Guid.NewGuid());
+            unitTestMicro = service.CreateMicro("Unit Test Micro " + Guid.NewGuid());
         }
 
         /// <summary>
         ///A test for ServiceHighfive to Highfive a given Card
         ///</summary>
         [TestMethod]
-        public void ServiceHighfiveCardTest()
+        public void HighfiveItemCardTest()
         {
             try
             {
-                var returnStatus = service.HighfiveItem(testCardId, Service.GeeklistItemType.Card);
+                var returnStatus = service.HighfiveItem(unitTestCard.Id, Service.GeeklistItemType.Card);
+                Assert.IsNotNull(returnStatus);
+            }
+            catch (GeekListException gle)
+            {
+                Assert.AreEqual("Duplicate!", gle.Error);
+            }
+        }
+
+        /// <summary>
+        ///A test for ServiceHighfive to Highfive a given Card
+        ///</summary>
+        [TestMethod]
+        public void HighfiveItemAsyncCardTest()
+        {
+            try
+            {
+                object returnStatus = null;
+                AutoResetEvent waitHandle = new AutoResetEvent(false);
+                service.HighfiveItemAsync((rs) =>
+                {
+                    returnStatus = rs;
+                    waitHandle.Set();
+                }, unitTestCard.Id, Service.GeeklistItemType.Card);
+                
+                if (!waitHandle.WaitOne(5000, false))
+                {
+                    Assert.Fail("Test timed out.");
+                }
+
                 Assert.IsNotNull(returnStatus);
             }
             catch (GeekListException gle)
@@ -47,11 +78,11 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceHighfive to Highfive a given Micro
         ///</summary>
         [TestMethod]
-        public void ServiceHighfiveMicroTest()
+        public void HighfiveItemMicroTest()
         {
             try
             {
-                var returnStatus = service.HighfiveItem(testMicroId, Service.GeeklistItemType.Micro);
+                var returnStatus = service.HighfiveItem(unitTestMicro.Id, Service.GeeklistItemType.Micro);
                 Assert.IsNotNull(returnStatus);
             }
             catch (GeekListException gle)
@@ -60,6 +91,34 @@ namespace GeeklistSharp.Tests
             }
         }
 
+        /// <summary>
+        ///A test for ServiceHighfive to Highfive a given Micro
+        ///</summary>
+        [TestMethod]
+        public void HighfiveItemAsyncMicroTest()
+        {
+            try
+            {
+                object returnStatus = null;
+                AutoResetEvent waitHandle = new AutoResetEvent(false);
+                service.HighfiveItemAsync((rs) =>
+                {
+                    returnStatus = rs;
+                    waitHandle.Set();
+                }, unitTestMicro.Id, Service.GeeklistItemType.Micro);
+
+                if (!waitHandle.WaitOne(5000, false))
+                {
+                    Assert.Fail("Test timed out.");
+                }
+
+                Assert.IsNotNull(returnStatus);
+            }
+            catch (GeekListException gle)
+            {
+                Assert.AreEqual("Duplicate!", gle.Error);
+            }
+        }
     }
 }
 

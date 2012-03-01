@@ -24,7 +24,7 @@ namespace GeeklistSharp.Tests
         }
 
         [TestMethod]
-        public void CurrentUserInfoTest()
+        public void GetUserTest()
         {
             var currentUser = service.GetUser();
 
@@ -34,19 +34,40 @@ namespace GeeklistSharp.Tests
         }
 
         [TestMethod]
-        public void UserByNameInfoTest()
+        public void GetUserAsyncTest()
         {
-            var user = service.GetUser("4mkmobile");
+            User currentUser =null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+            
+            service.GetUserAsync((u) =>
+            {
+                currentUser = u;
+                waitHandle.Set();
+            });
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
+            Assert.IsNotNull(currentUser);
+            Assert.IsNotNull(currentUser.Name);
+            //Assert.AreNotEqual(currentUser.Stats.Views, 0);
+        }
+
+        [TestMethod]
+        public void GetUserNameTest()
+        {
+            var user = service.GetUser(TestConstants.USERID);
 
             Assert.IsNotNull(user);
-            Assert.AreEqual(user.ScreenName, "4MKMobile");
-            Assert.AreEqual(user.Name, "Barranger Ridler");
+            Assert.AreEqual(user.ScreenName, TestConstants.USERID);
+            Assert.AreEqual(user.Name, TestConstants.USERNAME);
             //Assert.IsNotNull(user.Stats);
             //Assert.AreNotEqual(user.Stats.Views, 0);
         }
 
         [TestMethod]
-        public void AsyncUserByNameInfoTest()
+        public void GetUserAsyncNameTest()
         {
             User user = null;
             AutoResetEvent waitHandle = new AutoResetEvent(false); 
@@ -55,7 +76,7 @@ namespace GeeklistSharp.Tests
                 {
                     user = u;
                     waitHandle.Set();
-                }, "4mkmobile");
+                }, TestConstants.USERID);
             
             if (!waitHandle.WaitOne(5000, false))  
             {  
@@ -63,8 +84,8 @@ namespace GeeklistSharp.Tests
             }
 
             Assert.IsNotNull(user);
-            Assert.AreEqual(user.ScreenName, "4MKMobile");
-            Assert.AreEqual(user.Name, "Barranger Ridler");
+            Assert.AreEqual(user.ScreenName, TestConstants.USERID);
+            Assert.AreEqual(user.Name, TestConstants.USERNAME);
 
         }
 

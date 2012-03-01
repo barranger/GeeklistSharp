@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using GeeklistSharp.Model;
 using GeeklistSharp.Service;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -29,9 +30,9 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities to get the Activities of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersActivitiesTest()
+        public void GetCurrentUsersActivitiesTest()
         {
-            var returnStatus = service.GetCurrentUsersActivities();
+            Card[] returnStatus = service.GetCurrentUsersActivities();
 
             Assert.IsNotNull(returnStatus);
         }
@@ -40,9 +41,32 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities to get the Activities of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersActivitiesPagedTest()
+        public void GetCurrentUsersActivitiesAsyncTest()
         {
-            var currentUsersActivities = service.GetCurrentUsersActivities(1, null);
+            Card[] returnStatus = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetCurrentUsersActivitiesAsync((c) =>
+            {
+                returnStatus = c;
+                waitHandle.Set();
+            });
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
+
+            Assert.IsNotNull(returnStatus);
+        }
+
+        /// <summary>
+        ///A test for ServiceActivities to get the Activities of the current User
+        ///</summary>
+        [TestMethod]
+        public void GetCurrentUsersActivitiesPagedTest()
+        {
+            Card[] currentUsersActivities = service.GetCurrentUsersActivities(1, null);
 
             Assert.IsNotNull(currentUsersActivities);
         }
@@ -51,7 +75,30 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities to get the Activities of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersActivitiesCountTest()
+        public void GetCurrentUsersActivitiesAsyncPagedTest()
+        {
+            Card[] currentUsersActivities = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetCurrentUsersActivitiesAsync((c) =>
+            {
+                currentUsersActivities = c;
+                waitHandle.Set();
+            }, 1, null);
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
+
+            Assert.IsNotNull(currentUsersActivities);
+        }
+
+        /// <summary>
+        ///A test for ServiceActivities to get the Activities of the current User
+        ///</summary>
+        [TestMethod]
+        public void GetCurrentUsersActivitiesCountTest()
         {
             var currentUsersActivities = service.GetCurrentUsersActivities(null, 5);
 
@@ -62,9 +109,55 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities to get the Activities of the current User
         ///</summary>
         [TestMethod]
-        public void ServiceGetCurrentUsersActivitiesPagedCountTest()
+        public void GetCurrentUsersActivitiesAsyncCountTest()
+        {
+            Card[] currentUsersActivities = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetCurrentUsersActivitiesAsync((c) =>
+            {
+                currentUsersActivities = c;
+                waitHandle.Set();
+            }, null, 5);
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
+
+            Assert.IsNotNull(currentUsersActivities);
+        }
+
+        /// <summary>
+        ///A test for ServiceActivities to get the Activities of the current User
+        ///</summary>
+        [TestMethod]
+        public void GetCurrentUsersActivitiesPagedCountTest()
         {
             var currentUsersActivities = service.GetCurrentUsersActivities(2, 5);
+
+            Assert.IsNotNull(currentUsersActivities);
+        }
+
+        /// <summary>
+        ///A test for ServiceActivities to get the Activities of the current User
+        ///</summary>
+        [TestMethod]
+        public void GetCurrentUsersActivitiesAsyncPagedCountTest()
+        {
+            Card[] currentUsersActivities = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetCurrentUsersActivitiesAsync((c) =>
+            {
+                currentUsersActivities = c;
+                waitHandle.Set();
+            }, 2, 5);
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
 
             Assert.IsNotNull(currentUsersActivities);
         }
@@ -73,9 +166,9 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities for a specific User
         ///</summary>
         [TestMethod]
-        public void ServiceGetUsersActivitiesTest()
+        public void GetUsersActivitiesTest()
         {
-            var usersActivities = service.GetUsersActivities("oakcool");
+            List<Activity> usersActivities = service.GetUsersActivities("oakcool");
 
             Assert.IsNotNull(usersActivities);
         }
@@ -84,9 +177,21 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities for a specific User
         ///</summary>
         [TestMethod]
-        public void ServiceGetUsersActivitiesPagedTest()
+        public void GetUsersActivitiesAsyncTest()
         {
-            var usersActivities = service.GetUsersActivities("oakcool", 1, null);
+            List<Activity> usersActivities = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetUsersActivitiesAsync((ua) =>
+            {
+                usersActivities = ua;
+                waitHandle.Set();
+            }, "oakcool");
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
 
             Assert.IsNotNull(usersActivities);
         }
@@ -95,9 +200,9 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities for a specific User
         ///</summary>
         [TestMethod]
-        public void ServiceGetUsersActivitiesCountTest()
+        public void GetUsersActivitiesPagedTest()
         {
-            var usersActivities = service.GetUsersActivities("oakcool", null, 5);
+            List<Activity> usersActivities = service.GetUsersActivities("oakcool", 1, null);
 
             Assert.IsNotNull(usersActivities);
         }
@@ -106,9 +211,123 @@ namespace GeeklistSharp.Tests
         ///A test for ServiceActivities for a specific User
         ///</summary>
         [TestMethod]
-        public void ServiceGetUsersActivitiesPagedCountTest()
+        public void GetUsersActivitiesAsyncPagedTest()
         {
-            var usersActivities = service.GetUsersActivities("oakcool", 2, 5);
+            List<Activity> usersActivities = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetUsersActivitiesAsync((ua) =>
+            {
+                usersActivities = ua;
+                waitHandle.Set();
+            }, "oakcool", 1, null);
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
+
+            Assert.IsNotNull(usersActivities);
+        }
+
+        /// <summary>
+        ///A test for ServiceActivities for a specific User
+        ///</summary>
+        [TestMethod]
+        public void GetUsersActivitiesCountTest()
+        {
+            List<Activity> usersActivities = service.GetUsersActivities("oakcool", null, 5);
+
+            Assert.IsNotNull(usersActivities);
+        }
+
+        /// <summary>
+        ///A test for ServiceActivities for a specific User
+        ///</summary>
+        [TestMethod]
+        public void GetUsersActivitiesAsyncCountTest()
+        {
+            List<Activity> usersActivities = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetUsersActivitiesAsync((ua) =>
+            {
+                usersActivities = ua;
+                waitHandle.Set();
+            }, "oakcool", null, 5);
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
+
+            Assert.IsNotNull(usersActivities);
+        }
+
+        /// <summary>
+        ///A test for ServiceActivities for a specific User
+        ///</summary>
+        [TestMethod]
+        public void GetUsersActivitiesPagedCountTest()
+        {
+            List<Activity> usersActivities = service.GetUsersActivities("oakcool", 2, 5);
+
+            Assert.IsNotNull(usersActivities);
+        }
+
+        /// <summary>
+        ///A test for ServiceActivities for a specific User
+        ///</summary>
+        [TestMethod]
+        public void GetUsersActivitiesAsyncPagedCountTest()
+        {
+            List<Activity> usersActivities = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetUsersActivitiesAsync((ua) =>
+            {
+                usersActivities = ua;
+                waitHandle.Set();
+            }, "oakcool", 2, 5);
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
+
+            Assert.IsNotNull(usersActivities);
+        }
+
+        /// <summary>
+        ///A test for ServiceActivities for the current User
+        ///</summary>
+        [TestMethod]
+        public void GetAllActivitiesTest()
+        {
+            List<Activity> usersActivities = service.GetAllActivities();
+
+            Assert.IsNotNull(usersActivities);
+        }
+
+        /// <summary>
+        ///A test for ServiceActivities for the current User
+        ///</summary>
+        [TestMethod]
+        public void GetAllActivitiesAsyncTest()
+        {
+            List<Activity> usersActivities = null;
+            AutoResetEvent waitHandle = new AutoResetEvent(false);
+
+            service.GetAllActivitiesAsync((ua) =>
+            {
+                usersActivities = ua;
+                waitHandle.Set();
+            });
+
+            if (!waitHandle.WaitOne(5000, false))
+            {
+                Assert.Fail("Test timed out.");
+            }
 
             Assert.IsNotNull(usersActivities);
         }
